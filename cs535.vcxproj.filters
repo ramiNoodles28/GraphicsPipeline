@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="framebuffer.cpp" />
+    <ClCompile Include="gui.cxx" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="V3.cpp" />
+    <ClCompile Include="M33.cpp" />
+    <ClCompile Include="PPC.cpp" />
+    <ClCompile Include="TM.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framebuffer.h" />
+    <ClInclude Include="gui.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="V3.h" />
+    <ClInclude Include="M33.h" />
+    <ClInclude Include="PPC.h" />
+    <ClInclude Include="TM.h" />
+  </ItemGroup>
+</Project>
