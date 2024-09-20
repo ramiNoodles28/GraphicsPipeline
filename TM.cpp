@@ -40,6 +40,52 @@ void TM::setRectangle(float rw, float rh) {
 
 }
 
+TM TM::boundingbox() {
+	TM& t = *this;
+	V3 maxes = verts[0];
+	V3 mins = verts[0];
+	for (int i = 1; i < vertsN; i++) {
+		for (int axis = 0; axis < 3; axis++) {
+			maxes[axis] = (maxes[axis] < verts[i][axis]) ? verts[i][axis] : maxes[axis];
+			mins[axis] = (mins[axis] > verts[i][axis]) ? verts[i][axis] : mins[axis];
+		}
+	}
+	TM box;
+	box.vertsN = 8;
+	box.trisN = 12;
+	box.allocateMemory();
+	box.verts[0] = maxes;
+	box.verts[1] = V3(maxes[0], maxes[1], mins[2]);
+	box.verts[2] = V3(maxes[0], mins[1], maxes[2]);
+	box.verts[3] = V3(mins[0], maxes[1], maxes[2]);
+	box.verts[4] = V3(mins[0], mins[1], maxes[2]);
+	box.verts[5] = V3(mins[0], maxes[1], mins[2]);
+	box.verts[6] = V3(maxes[0], mins[1], mins[2]);
+	box.verts[7] = mins;
+
+	int tri = 0;
+	// top face
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 5; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 1; tri++;
+	// front face
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 1; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 5; tri++;
+	// right face
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 6; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 2; tri++;
+	// back face
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 4; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 3; tri++;
+	// left face
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 3; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 4; tri++;
+	// bottom face
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 2; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 6; tri++;
+	return box;
+}
+
+
 void TM::translate(V3 tv) {
 
 	for (int vi = 0; vi < vertsN; vi++) {

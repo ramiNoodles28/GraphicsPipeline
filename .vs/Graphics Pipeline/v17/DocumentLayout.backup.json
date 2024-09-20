@@ -1,54 +1,62 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\",
+  "WorkspaceRootPath": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:framebuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\ppc.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\ppc.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:ppc.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\tm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:tm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:framebuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\m33.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:m33.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\ppc.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:ppc.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\tm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:tm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:V3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\m33.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\m33.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:m33.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:framebuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:V3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\ppc.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:ppc.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:easing.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:V3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:easing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:framebuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\m33.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:m33.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\tm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:tm.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\tm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:tm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{25615035-3AF2-42FC-967B-63AD88A4EECE}|cs535.vcxproj|solutionrelative:scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 190,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -66,37 +74,63 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
+              "Title": "easing.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.h",
+              "RelativeDocumentMoniker": "easing.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.h",
+              "RelativeToolTip": "easing.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-09-20T22:12:54.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "easing.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.cpp",
+              "RelativeDocumentMoniker": "easing.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\easing.cpp",
+              "RelativeToolTip": "easing.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-20T22:12:28.412Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "V3.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.h",
               "RelativeDocumentMoniker": "V3.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.h",
               "RelativeToolTip": "V3.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-09-20T17:20:40.687Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "TM.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\TM.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\TM.h",
               "RelativeDocumentMoniker": "TM.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\TM.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\TM.h",
               "RelativeToolTip": "TM.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-09-20T17:20:38.869Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 13,
               "Title": "scene.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.h",
               "RelativeDocumentMoniker": "scene.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.h",
               "RelativeToolTip": "scene.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -105,24 +139,24 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "PPC.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\PPC.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\PPC.h",
               "RelativeDocumentMoniker": "PPC.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\PPC.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\PPC.h",
               "RelativeToolTip": "PPC.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-09-20T17:20:37.222Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "M33.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\M33.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\M33.h",
               "RelativeDocumentMoniker": "M33.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\M33.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\M33.h",
               "RelativeToolTip": "M33.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -131,11 +165,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "framebuffer.h",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.h",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.h",
               "RelativeDocumentMoniker": "framebuffer.h",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.h",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.h",
               "RelativeToolTip": "framebuffer.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABoAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -146,41 +180,41 @@
         },
         {
           "DockedWidth": 210,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 4,
               "Title": "V3.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.cpp",
               "RelativeDocumentMoniker": "V3.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\V3.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\V3.cpp",
               "RelativeToolTip": "V3.cpp",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAAAIkAAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-20T17:20:40.135Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "PPC.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\PPC.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\PPC.cpp",
               "RelativeDocumentMoniker": "PPC.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\PPC.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\PPC.cpp",
               "RelativeToolTip": "PPC.cpp",
-              "ViewState": "AgIAADAAAAAAAAAAAAAvwEoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACoAAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-20T17:20:36.672Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 1,
               "Title": "M33.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\M33.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\M33.cpp",
               "RelativeDocumentMoniker": "M33.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\M33.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\M33.cpp",
               "RelativeToolTip": "M33.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAE0AAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -191,37 +225,37 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "framebuffer.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.cpp",
               "RelativeDocumentMoniker": "framebuffer.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\framebuffer.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\framebuffer.cpp",
               "RelativeToolTip": "framebuffer.cpp",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAvwHsAAAAGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-20T17:20:21.767Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "scene.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.cpp",
               "RelativeDocumentMoniker": "scene.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\scene.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\scene.cpp",
               "RelativeToolTip": "scene.cpp",
-              "ViewState": "AgIAAOYAAAAAAAAAAAAewP4AAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAD0AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-20T17:13:56.781Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 11,
               "Title": "TM.cpp",
-              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\TM.cpp",
+              "DocumentMoniker": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\TM.cpp",
               "RelativeDocumentMoniker": "TM.cpp",
-              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\lectureCode\\currentCode\\TM.cpp",
+              "ToolTip": "C:\\Users\\the_h\\Documents\\Purdue HW\\cs 334\\graphicsPipeline\\TM.cpp",
               "RelativeToolTip": "TM.cpp",
-              "ViewState": "AgIAAKUAAAAAAAAAAAAAAJ8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAI0AAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-20T17:17:32.434Z",
               "EditorCaption": ""

@@ -81,7 +81,7 @@ ostream& operator<<(ostream& ostr, V3 v) {
 } // Stream output
 
 istream& operator>>(istream& istr, V3& v) {
-	return istr >> v[0] >> v[1] >> v[2];;
+	return istr >> v[0] >> v[1] >> v[2];
 } // Stream input
 
 V3 V3::zeroFix() {

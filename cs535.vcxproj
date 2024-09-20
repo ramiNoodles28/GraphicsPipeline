@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="easing.h" />
     <ClInclude Include="framebuffer.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="M33.h" />
@@ -85,6 +86,7 @@
     <ClInclude Include="V3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="easing.cpp" />
     <ClCompile Include="framebuffer.cpp" />
     <ClCompile Include="gui.cxx" />
     <ClCompile Include="M33.cpp" />

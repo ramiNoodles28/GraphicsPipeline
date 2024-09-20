@@ -2,7 +2,7 @@
 #include "V3.h"
 #include "M33.h"
 #include "TM.h"
-
+#include "easing.h"
 Scene *scene;
 
 using namespace std;
@@ -30,7 +30,7 @@ Scene::Scene() {
 	gui->show();
 	gui->uiw->position(u0, v0 + fb->h + v0);
 
-	tmsN = 1;
+	tmsN = 2;
 	tms = new TM[tmsN];
 
 
@@ -40,45 +40,42 @@ Scene::Scene() {
 void Scene::DBG() {
 	cerr << endl;
 
-#if 0
-	{
-		unsigned int col = 0xFF000001;
-		V3 colorv;
-		colorv.SetFromColor(col);
-		cerr << colorv << endl;
-		return;
-	}
-#endif
 	{
 		tms[0].loadBin("geometry/teapot1K.bin");
-		tms[0].onFlag = 1;
+		//tms[0].onFlag = 1;
 		V3 centroid = tms[0].centroid();
+		
 
 		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - centroid);
 		centroid = V3(0.0f, 0.0f, -150.0f);
-
+		tms[1] = tms[0].boundingbox();
 		V3 newC = centroid + V3(100.0f, 150.0f, 0.0f);
 		V3 newVD = (centroid - newC).normalize();
 		V3 newUpG(0.0f, 1.0f, 0.0f);
-		ppc->setPose(newC, newVD, newUpG);
+		PPC ppc0 = *ppc;
+		//ppc->setPose(newC, newVD, newUpG);
+		ppc->zoom(0.5f);
+		PPC ppc1 = *ppc;
 		Render();
 		fb->redraw();
-		//PPC ppc2(90.0f, fb->w, fb->h);
-		//ppc2.C = centroid;
-		//ppc2.RenderWF(fb, 10.0f, ppc);
-		fb->redraw();
 
-
-		for (int fi = 0; fi < 3600; fi++) {
+		int loop = 1800;
+		
+		for (int fi = 2; fi < loop; fi++) {
 			Render();
-			//ppc2.RenderWF(fb, 10.0f, ppc);
+			//ppc2.renderWF(fb, 10.0f, ppc);
 			fb->redraw();
 			Fl::check();
-			//ppc2.Translate(V3(.01f, 0.0f, 0.0f));
-			tms[0].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
-			//tms[0].ScaleInPlace(0.999f);
-			//ppc->Translate(V3(1.0f, 0.0f, 0.0f));
+			//ppc2.translate(V3(.1f, 0.0f, 0.0f));
+			//tms[0].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
+			//tms[1].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
+			//tms[0].scaleInPlace(0.999f);
+			//ppc->translate(V3(1.0f, 0.0f, 0.0f));
+			float t = (float) fi / (float) loop;
+			ppc->zoom(1.01f);
+			//ppc->interpCam(ppc0, ppc1, t, easeInExpo);
 		}
+		*ppc = ppc0;
 		return;
 	}
 

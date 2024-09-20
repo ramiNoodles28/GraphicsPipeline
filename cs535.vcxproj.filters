@@ -8,6 +8,7 @@
     <ClCompile Include="M33.cpp" />
     <ClCompile Include="PPC.cpp" />
     <ClCompile Include="TM.cpp" />
+    <ClCompile Include="easing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framebuffer.h" />
@@ -17,5 +18,6 @@
     <ClInclude Include="M33.h" />
     <ClInclude Include="PPC.h" />
     <ClInclude Include="TM.h" />
+    <ClInclude Include="easing.h" />
   </ItemGroup>
 </Project>
