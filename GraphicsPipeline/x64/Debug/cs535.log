@@ -1,6 +1,0 @@
-﻿  scene.cpp
-C:\Users\the_h\Documents\Purdue HW\cs 334\graphicsPipeline\scene.cpp(130,8): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\the_h\Documents\Purdue HW\cs 334\graphicsPipeline\scene.cpp(155,14): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\the_h\Documents\Purdue HW\cs 334\graphicsPipeline\scene.cpp(218,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\the_h\Documents\Purdue HW\cs 334\graphicsPipeline\scene.cpp(227,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  cs535.vcxproj -> C:\Users\the_h\Documents\Purdue HW\cs 334\graphicsPipeline\x64\Debug\GraphicsPipeline.exe
