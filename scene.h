@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "gui.h"
 #include "framebuffer.h"
 #include "PPC.h"
@@ -18,6 +20,7 @@ public:
 	void FreeCam();
 	void PathCam();
 	void Render();
+	void loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum);
 
 	void RotatingPoints(); // Generate points rotated about an axis and save to file
 	void NameCycle(); // rasterize my name and have it translate across frame

@@ -123,6 +123,11 @@ void FrameBuffer::KeyboardHandle() {
 		cam->tilt(-s);
 		break;
 	}
+	case FL_Enter: {
+		cam->saveToTxt("camPaths.txt");
+		cerr << "INFO: pressed enter key : " << endl;
+		break;
+	}
 	default:
 		//cerr << "INFO: do not understand keypress : " << cam->C << endl;
 		return;

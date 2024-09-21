@@ -6,6 +6,8 @@
 #include <fstream>
 #include <strstream>
 
+
+
 PPC::PPC(float hfov, int _w, int _h) {
 	w = _w;
 	h = _h;
@@ -117,23 +119,25 @@ V3 PPC::getViewDirection() {
 
 float PPC::getFocalLength() {
 	return c * getViewDirection();
-} 
+}
+
+
 
 void PPC::loadFromTxt(char *fname) {
 	ifstream ifs(fname);
 	if (ifs.is_open()) {
-		ifs >> a >> b >> c >> C;
+		ifs >> a >> b >> c >> C >> w >> h;
 		ifs.close();
+		cerr << "INFO: loaded: " << C << endl;
 	} else {
 		cerr << "INFO: cannot open file: " << fname << endl;
 	}
-	
 }
 
 void PPC::saveToTxt(char* fname) {
-	ofstream ofs(fname);
+	ofstream ofs(fname, ios::app);
 	if (ofs.is_open()) {
-		ofs << a << " " << b << " " << c << " " << C << endl;
+		ofs << a << b << c << C << w << " " << h << endl << endl;
 		ofs.close();
 	} else {
 		cerr << "INFO: cannot open file: " << fname << endl;
@@ -141,3 +145,6 @@ void PPC::saveToTxt(char* fname) {
 	
 }
 
+istream& operator>>(istream& istr, PPC& p) {
+	return istr >> p.a >> p.b >> p.c >> p.C >> p.w >> p.h;
+}

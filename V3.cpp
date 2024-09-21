@@ -75,8 +75,8 @@ V3 V3::operator^(V3 v) {
 } // Cross product
 
 ostream& operator<<(ostream& ostr, V3 v) {
-	V3 u = v.zeroFix();
-	// V3 u = v;
+	//V3 u = v.zeroFix();
+	V3 u = v;
 	return ostr << u[0] << " " << u[1] << " " << u[2] << endl;
 } // Stream output
 

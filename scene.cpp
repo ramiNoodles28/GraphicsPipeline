@@ -1,3 +1,9 @@
+#include <iostream>
+#include <fstream>
+#include <strstream>
+#include <sstream>
+#include <vector>
+#include <iomanip>
 #include "scene.h"
 #include "V3.h"
 #include "M33.h"
@@ -7,9 +13,7 @@ Scene *scene;
 
 using namespace std;
 
-#include <iostream>
-#include <fstream>
-#include <strstream>
+
 
 Scene::Scene() {
 	int u0 = 20;
@@ -100,31 +104,87 @@ void Scene::FreeCam() {
 			"\nZ/X - Roll "
 			"\nUp/Down Arrow - Tilt "
 			"\nLeft/Right Arrow - Pan" << endl;
+	fb->clear();
 	tms[0].loadBin("geometry/teapot1K.bin");
-	V3 centroid;
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	tms[1] = tms[0].boundingbox();
+	tms[2].loadBin("geometry/teapot1k.bin");
+	tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+	tms[3] = tms[2].boundingbox();
+	tms[4].loadBin("geometry/teapot1k.bin");
+	tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
+	tms[5] = tms[4].boundingbox();
 	Render();
 	fb->addCam(ppc);
 	fb->s = 2;
-	int t = 0;
+	float t = 0.0f;
 	while (true) {
-
+		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
+		tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
+		tms[4].translate(V3(1,0,0) * cos(t));
 
 
 		Render();
 		fb->redraw();
 		Fl::check();
-		t++;
+		t += 0.1;
 	}
 }
 
 void Scene::PathCam() {
 	cerr << "INFO: pressed Path Cam button on GUI" << endl;
 	ppc = new PPC(60.f, fb->w, fb->h);
+	fb->clear();
+	tms[0].loadBin("geometry/teapot1K.bin");
+	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	tms[1] = tms[0].boundingbox();
+	tms[2].loadBin("geometry/teapot1k.bin");
+	tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+	tms[3] = tms[2].boundingbox();
+	tms[4].loadBin("geometry/teapot1k.bin");
+	tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
+	tms[5] = tms[4].boundingbox();
+	Render();
+	int camNum = 8;
+	vector<PPC> ppcs(camNum);
+	loadCamsFromTxt("camPaths.txt", ppcs, camNum);
+	int frame = 0;
+	for (int i = 0; i < camNum; i++) {
+		PPC p0 = ppcs[i];
+		PPC p1 = (i + 1 == camNum) ? ppcs[0] : ppcs[i + 1];
+		float loop = 31.4;
+		
+		for (float t = 0.0f; t < loop; t += 0.6f) {
+			ostringstream oss;
+			oss << "camFrames/frame" << setw(4) << setfill('0') << frame << ".tiff";
+			string img = oss.str();
+			fb->saveAsTiff((char *)img.c_str());
+			tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
+			tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
+			tms[4].translate(V3(1, 0, 0) * cos(t));
+			frame++;
+			ppc->interpCam(p0, p1, t / loop);
+			Render();
+			fb->redraw();
+			Fl::check();
+		}
+	}
+	
 }
 
 
-
+void Scene::loadCamsFromTxt(char *fname, vector<PPC>& ppcs, int camNum) {
+	ifstream ifs(fname);
+	if (!ifs.is_open())	{
+		cerr << "ERROR: Could not open file: " << fname << endl;
+		return;
+	}
+	for (int i = 0; i < camNum; i++) {
+		ifs >> ppcs[i];
+		cerr << ppcs[i].C << endl;
+	}
+	ifs.close();
+}
 
 
 
