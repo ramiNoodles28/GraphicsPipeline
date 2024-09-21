@@ -4,8 +4,8 @@
 #include <istream>
 #include <cmath>
 #include <iostream>
-#define M_PI 3.1415926535897932384626433832
 using namespace std;
+#define PI 3.1415926535897932384626433832
 
 V3::V3(float x, float y, float z) {
 	xyz[0] = x;
@@ -123,11 +123,21 @@ V3 V3::rotateAboutAxis(V3 aO, V3 aD, float theta) {
 	M33 roty; roty.SetRotY(theta);
 	V3 PlR = roty * Pl;
 
-	M33 cs_1; cs_1 = cs.invert();
+	M33 cs_1  = cs.invert();
 	// come back to world
 	V3 ret = cs_1 * PlR + aO;
 	return ret;
 } // Rotate vector (point) about axis
+
+V3 V3::rotateDir(V3 dir, float angle) {
+	float rad = PI * angle / 180;
+	V3& v = *this;
+	V3 k = dir.normalize();
+	float s = sin(rad);
+	float c = cos(rad);
+	V3 ret = (v * c) + ((k ^ v) * s) + (k * (k * v) * (1 - c));
+	return ret;
+} // Rotate vector about direction
 
 void V3::setFromColor(unsigned int color) {
 	unsigned char* rgb = (unsigned char*) &color;

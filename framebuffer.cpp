@@ -13,6 +13,12 @@ FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	w = _w;
 	h = _h;
 	pix = new unsigned int[w*h];
+	cam = NULL;
+	s = 1;
+}
+
+void FrameBuffer::addCam(PPC *c) {
+	cam = c;
 }
 
 void FrameBuffer::draw() {
@@ -34,6 +40,12 @@ int FrameBuffer::handle(int event) {
 		cerr << u << " " << v << "          \r";
 		return 0;
 	}
+	case FL_MOUSEWHEEL: {
+		int scroll = Fl::event_dy();
+		if (scroll < 0) cam->zoom(1.1);
+		else if (scroll > 0) cam->zoom(0.9);
+		return 0;
+	}
 	default:
 		return 0;
 	}
@@ -43,12 +55,76 @@ int FrameBuffer::handle(int event) {
 void FrameBuffer::KeyboardHandle() {
 	int key = Fl::event_key();
 	switch (key) {
+	case 'w':  // ASCII value for 'w'
+	case 'W': {
+		//cerr << "INFO: pressed W (move forward) : " << cam->C << endl;
+		cam->translate(cam->getViewDirection() * s);
+		break;
+	}
+	case 'a':  // ASCII value for 'a'
+	case 'A': {
+		//cerr << "INFO: pressed A (move left) : " << cam->C << endl;
+		cam->translate(cam->a.normalize() * -s);
+		break;
+	}
+	case 's':  // ASCII value for 's'
+	case 'S': {
+		//cerr << "INFO: pressed S (move backwards) : " << cam->C << endl;
+		cam->translate(cam->getViewDirection() * -s);
+		break;
+	}
+	case 'd':  // ASCII value for 'd'
+	case 'D': {
+		//cerr << "INFO: pressed D (move right) : " << cam->C << endl;
+		cam->translate(cam->a.normalize() * s);
+		break;
+	}
+	case 'q':  // ASCII value for 'q'
+	case 'Q': {
+		//cerr << "INFO: pressed Q (move down) : " << cam->C << endl;
+		cam->translate(V3(0, -s, 0));
+		break;
+	}
+	case 'e':  // ASCII value for 'd'
+	case 'E': {
+		//cerr << "INFO: pressed E (move up) : " << cam->C << endl;
+		cam->translate(V3(0, s, 0));
+		break;
+	}
+	case 'z':  // ASCII value for 'z'
+	case 'Z': {
+		//cerr << "INFO: pressed Z (roll+) : " << cam->C << endl;
+		cam->roll(s);
+		break;
+	}
+	case 'x':  // ASCII value for 'd'
+	case 'X': {
+		//cerr << "INFO: pressed X (roll-) : " << cam->C << endl;
+		cam->roll(-s);
+		break;
+	}
 	case FL_Left: {
-		cerr << "INFO: pressed left arrow key";
+		//cerr << "INFO: pressed left arrow key : " << cam->C << endl;
+		cam->pan(s);
+		break;
+	}
+	case FL_Right: {
+		//cerr << "INFO: pressed right arrow key : " << cam->C << endl;
+		cam->pan(-s);
+		break;
+	}
+	case FL_Up: {
+		//cerr << "INFO: pressed up arrow key : " << cam->C << endl;
+		cam->tilt(s);
+		break;
+	}
+	case FL_Down: {
+		//cerr << "INFO: pressed down arrow key : " << cam->C << endl;
+		cam->tilt(-s);
 		break;
 	}
 	default:
-		cerr << "INFO: do not understand keypress" << endl;
+		//cerr << "INFO: do not understand keypress : " << cam->C << endl;
 		return;
 	}
 }

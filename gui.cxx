@@ -9,23 +9,33 @@ void GUI::cb_DBG(Fl_Button* o, void* v) {
   ((GUI*)(o->parent()->user_data()))->cb_DBG_i(o,v);
 }
 
-void GUI::cb_NewButton_i(Fl_Return_Button*, void*) {
-  NewButton_cb();
+void GUI::cb_FreeCam_i(Fl_Button*, void*) {
+    FreeCam_cb();
 }
-void GUI::cb_NewButton(Fl_Return_Button* o, void* v) {
-  ((GUI*)(o->parent()->user_data()))->cb_NewButton_i(o,v);
+void GUI::cb_FreeCam(Fl_Button* o, void* v) {
+  ((GUI*)(o->parent()->user_data()))->cb_FreeCam_i(o,v);
+}
+
+void GUI::cb_PathCam_i(Fl_Button*, void*) {
+    PathCam_cb();
+}
+void GUI::cb_PathCam(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_PathCam_i(o, v);
 }
 #include "scene.h"
 
 GUI::GUI() {
-  { uiw = new Fl_Double_Window(199, 197, "GUI");
+  { uiw = new Fl_Double_Window(200, 250, "GUI");
     uiw->user_data((void*)(this));
-    { Fl_Button* o = new Fl_Button(15, 15, 95, 40, "DBG");
+    { Fl_Button* o = new Fl_Button(15, 15, 100, 50, "DBG");
       o->selection_color(FL_DARK_RED);
       o->callback((Fl_Callback*)cb_DBG);
     } // Fl_Button* o
-    { Fl_Return_Button* o = new Fl_Return_Button(30, 80, 110, 100, "NewButton");
-      o->callback((Fl_Callback*)cb_NewButton);
+    { Fl_Button* o = new Fl_Button(15, 80, 100, 50, "Free Cam");
+      o->callback((Fl_Callback*)cb_FreeCam);
+    } // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(15, 145, 100, 50, "Path Cam");
+  	  o->callback((Fl_Callback*)cb_PathCam);
     } // Fl_Return_Button* o
     uiw->end();
   } // Fl_Double_Window* uiw
@@ -44,6 +54,10 @@ void GUI::DBG_cb() {
   scene->DBG();
 }
 
-void GUI::NewButton_cb() {
-  scene->NewButton();
+void GUI::FreeCam_cb() {
+  scene->FreeCam();
+}
+
+void GUI::PathCam_cb() {
+    scene->PathCam();
 }

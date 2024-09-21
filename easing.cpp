@@ -1,20 +1,17 @@
 #include <cmath>
 #include "easing.h"
-
-#ifndef PI
 #define PI 3.1415926545
-#endif
 
 float easeInSine(float t) {
-    return sin(1.5707963 * t);
+    return sin(PI / 2.0f * t);
 }
 
 float easeOutSine(float t) {
-    return 1 + sin(1.5707963 * (--t));
+    return 1 + sin(PI * (--t));
 }
 
 float easeInOutSine(float t) {
-    return 0.5 * (1 + sin(3.1415926 * (t - 0.5)));
+    return 0.5 * (1 + sin(PI * (t - 0.5)));
 }
 
 float easeInQuad(float t) {
@@ -62,28 +59,6 @@ float easeInOutQuart(float t) {
     }
 }
 
-float easeInQuint(float t) {
-    float t2 = t * t;
-    return t * t2 * t2;
-}
-
-float easeOutQuint(float t) {
-    float t2 = (--t) * t;
-    return 1 + t * t2 * t2;
-}
-
-float easeInOutQuint(float t) {
-    float t2;
-    if (t < 0.5) {
-        t2 = t * t;
-        return 16 * t * t2 * t2;
-    }
-    else {
-        t2 = (--t) * t;
-        return 1 + 16 * t * t2 * t2;
-    }
-}
-
 float easeInExpo(float t) {
     return (pow(2, 8 * t) - 1) / 255;
 }
@@ -98,40 +73,6 @@ float easeInOutExpo(float t) {
     }
     else {
         return 1 - 0.5 * pow(2, -16 * (t - 0.5));
-    }
-}
-
-float easeInCirc(float t) {
-    return 1 - sqrt(1 - t);
-}
-
-float easeOutCirc(float t) {
-    return sqrt(t);
-}
-
-float easeInOutCirc(float t) {
-    if (t < 0.5) {
-        return (1 - sqrt(1 - 2 * t)) * 0.5;
-    }
-    else {
-        return (1 + sqrt(2 * t - 1)) * 0.5;
-    }
-}
-
-float easeInBack(float t) {
-    return t * t * (2.70158 * t - 1.70158);
-}
-
-float easeOutBack(float t) {
-    return 1 + (--t) * t * (2.70158 * t + 1.70158);
-}
-
-float easeInOutBack(float t) {
-    if (t < 0.5) {
-        return t * t * (7 * t - 2.5) * 2;
-    }
-    else {
-        return 1 + (--t) * t * 2 * (7 * t + 2.5);
     }
 }
 

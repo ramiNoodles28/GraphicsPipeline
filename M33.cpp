@@ -3,7 +3,7 @@
 #include <ostream>
 #include <istream>
 #include <cmath>
-#define M_PI 3.1415926535897932384626433832
+#define PI 3.1415926535897932384626433832
 using namespace std;
 
 M33::M33(V3 v0, V3 v1, V3 v2) {
@@ -14,7 +14,7 @@ M33::M33(V3 v0, V3 v1, V3 v2) {
 
 M33::M33(V3 axis, float angle) {
     V3 u = axis.normalize();
-    float rad = M_PI * angle / 180;
+    float rad = PI * angle / 180;
     float c = cos(rad);
     float s = sin(rad);
     rows[0][0] = u[0] * u[0] * (1 - c) + c;

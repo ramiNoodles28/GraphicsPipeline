@@ -12,8 +12,6 @@ using namespace std;
 #include <strstream>
 
 Scene::Scene() {
-
-
 	int u0 = 20;
 	int v0 = 40;
 	int h = 400;
@@ -30,38 +28,48 @@ Scene::Scene() {
 	gui->show();
 	gui->uiw->position(u0, v0 + fb->h + v0);
 
-	tmsN = 2;
+	tmsN = 6;
 	tms = new TM[tmsN];
-
-
 }
 
+void Scene::Render() {
+	if (!fb)
+		return;
+	fb->set(0xFFFFFFFF);
+	for (int tmi = 0; tmi < tmsN; tmi++) {
+		tms[tmi].renderWF(fb, ppc);
+	}
+	fb->redraw();
+}
 
 void Scene::DBG() {
 	cerr << endl;
 
 	{
 		tms[0].loadBin("geometry/teapot1K.bin");
-		//tms[0].onFlag = 1;
-		V3 centroid = tms[0].centroid();
-		
-
-		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - centroid);
-		centroid = V3(0.0f, 0.0f, -150.0f);
+		V3 centroid;
+		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 		tms[1] = tms[0].boundingbox();
+		tms[2] = tms[1].boundingbox();
+		tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+		//tms[3] = tms[2].boundingbox();
+		//tms[3].translate(V3(-150, 0.0f, 150.0f) - tms[3].centroid());
+
+		centroid = V3(0.0f, 0.0f, -150.0f);
+		
 		V3 newC = centroid + V3(100.0f, 150.0f, 0.0f);
 		V3 newVD = (centroid - newC).normalize();
 		V3 newUpG(0.0f, 1.0f, 0.0f);
 		PPC ppc0 = *ppc;
-		//ppc->setPose(newC, newVD, newUpG);
-		ppc->zoom(0.5f);
+		ppc->setPose(newC, newVD, newUpG);
+		//ppc->pan(-30.0f);
 		PPC ppc1 = *ppc;
 		Render();
 		fb->redraw();
 
 		int loop = 1800;
 		
-		for (int fi = 2; fi < loop; fi++) {
+		for (int fi = 8; fi < loop; fi++) {
 			Render();
 			//ppc2.renderWF(fb, 10.0f, ppc);
 			fb->redraw();
@@ -72,142 +80,53 @@ void Scene::DBG() {
 			//tms[0].scaleInPlace(0.999f);
 			//ppc->translate(V3(1.0f, 0.0f, 0.0f));
 			float t = (float) fi / (float) loop;
-			ppc->zoom(1.01f);
-			//ppc->interpCam(ppc0, ppc1, t, easeInExpo);
+			//ppc->pan(0.1f);
+			ppc->interpCam(ppc0, ppc1, t, easeOutBounce);
 		}
 		*ppc = ppc0;
 		return;
 	}
+}
 
-	{
-		TM tm;
-		float rw = 40.0f;
-		float rh = 20.0f;
-		tm.setRectangle(rw, rh);
-		tm.translate(V3(0.0f, 0.0f, -40.0f));
-		for (int fi = 0; fi < 1000; fi++) {
-			fb->set(0xFFFFFFFF);
-			tm.renderWF(fb, ppc);
-			tm.translate(V3(0.0f, 0.0f, -.1f));
-			fb->redraw();
-			Fl::check();
-		}
-		return;
-	}
+void Scene::FreeCam() {
+	cerr << "INFO: pressed Free Cam button on GUI" << endl;
+	cerr << "Contols: "
+			"\nW - Forward "
+			"\nS - Backward "
+			"\nA - Left "
+			"\nD - Right"
+			"\nQ - Up "
+			"\nE - Down "
+			"\nZ/X - Roll "
+			"\nUp/Down Arrow - Tilt "
+			"\nLeft/Right Arrow - Pan" << endl;
+	tms[0].loadBin("geometry/teapot1K.bin");
+	V3 centroid;
+	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	Render();
+	fb->addCam(ppc);
+	fb->s = 2;
+	int t = 0;
+	while (true) {
 
-	{
-		V3 P(0.0f, 0.0f, -100.0f);
-		V3 Q;
-		if (!ppc->project(P, Q))
-			return;
-		fb->set(0xFFDDDDDD);
-		fb->rasterizeCircle(Q, 3.0f, 0xFF0000FF);
+
+
+		Render();
 		fb->redraw();
-		return;
-	}
-
-	{
-		int fN = 1000;
-		V3 p0(20.0f, 30.3f, 0.0f);
-		V3 p1(220.0f, 130.3f, 0.0f);
-		for (int fi = 0; fi < fN; fi++) {
-			fb->set(0xFFDDDDDD);
-			V3 c0(0.0f, 0.0f, 0.0f);
-			V3 c1(0.0f, 0.0f, 0.0f);
-			fb->rasterize2DSegment(p0, p1, c0, c1);
-			fb->redraw();
-			Fl::check();
-			p0 = p0 + V3(0.0f, +1.0f, 0.0f);
-			p1 = p1 + V3(0.0f, -1.0f, 0.0f);
-		}
-		return;
-	}
-	{
-		V3 center(100.3f, 200.9f, 0.0f);
-		float radius = 34.1f;
-		fb->set(0xFFFFFFFF);
-		fb->rasterizeCircle(center, radius, 0xFF000000);
-		fb->redraw();
-		return;
-	}
-
-
-	{
-		int u0 = 30;
-		int v0 = 50;
-		int l = 100;
-		int h = 200;
-		int fN = 600;
-		for (int fi = 0; fi < fN; fi++) {
-			fb->set(0xFFFFFFFF);
-			unsigned int col = 0xFF00FF00;
-			fb->rasterizeRectangle(u0, v0, l, h, col);
-			fb->redraw();
-			Fl::check();
-			u0++;
-		}
-		return;
-	}
-	{
-		M33 m;
-		m[0] = V3(1.0f, 0.0f, 0.0f);
-		m[1] = V3(0.0f, 1.0f, 0.0f);
-		m[2] = V3(1.0f, 0.0f, 1.0f);
-		cerr << m << endl;
-		cerr << m.getCol(0);
-		return;
-		V3 v(10.0f, 9.0f, 3.0f);
-		cerr << m*v << endl;
-		return;
-		cerr << "row 0: " << m[1] << endl;
-		return;
-	}
-	{
-		V3 v0(1.0f, 2.0f, 3.0f);
-		cerr << endl << "v0: " << v0;
-		return;
-	}
-
-	{
-		V3 v0(1.0f, 2.0f, 3.0f);
-		cerr << endl << v0[0] << " " << v0[1] << endl;
-		v0[1] = 100.0f;
-		return;
-		V3 v1(2.0f, 2.0f, 2.0f);
-		// v0[0]
-		V3 v2 = v0 + v1;
-		cerr << v2.xyz[0] << endl;
-		return;
-	}
-
-	{
-		cerr << "INFO: pressed DBG" << endl;
-		fb->set(0xFF0000FF);
-		fb->redraw();
+		Fl::check();
+		t++;
 	}
 }
 
-void Scene::NewButton() {
-	cerr << "INFO: pressed New button on GUI" << endl;
+void Scene::PathCam() {
+	cerr << "INFO: pressed Path Cam button on GUI" << endl;
+	ppc = new PPC(60.f, fb->w, fb->h);
 }
 
 
 
 
 
-
-void Scene::Render() {
-
-	if (!fb)
-		return;
-
-	fb->set(0xFFFFFFFF);
-	for (int tmi = 0; tmi < tmsN; tmi++) {
-		tms[tmi].renderWF(fb, ppc);
-	}
-	fb->redraw();
-
-}
 
 /////////////////// funny stuff
 

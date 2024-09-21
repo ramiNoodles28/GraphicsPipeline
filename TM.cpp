@@ -115,13 +115,9 @@ void TM::renderWF(FrameBuffer *fb, PPC *ppc) {
 		V3 pvs[3];
 		unsigned int vinds[3];
 		for (int vi = 0; vi < 3; vi++) {
-		
-			
 			vinds[vi] = tris[3 * tri + vi];
 			tvs[vi] = verts[vinds[vi]];
-			if (!ppc->project(tvs[vi], pvs[vi]))
-				continue;
-//			fb->RasterizeCircle(pvs[vi], 3, 0xFF000000);
+			ppc->project(tvs[vi], pvs[vi]);
 		}
 		for (int ei = 0; ei < 3; ei++) {
 			fb->rasterize2DSegment(pvs[ei], pvs[(ei + 1) % 3], 

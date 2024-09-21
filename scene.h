@@ -15,7 +15,8 @@ public:
 	int tmsN;
 	Scene();
 	void DBG();
-	void NewButton();
+	void FreeCam();
+	void PathCam();
 	void Render();
 
 	void RotatingPoints(); // Generate points rotated about an axis and save to file

@@ -14,11 +14,14 @@ public:
 private:
   inline void cb_DBG_i(Fl_Button*, void*);
   static void cb_DBG(Fl_Button*, void*);
-  inline void cb_NewButton_i(Fl_Return_Button*, void*);
-  static void cb_NewButton(Fl_Return_Button*, void*);
+  inline void cb_FreeCam_i(Fl_Button*, void*);
+  static void cb_FreeCam(Fl_Button*, void*);
+  inline void cb_PathCam_i(Fl_Button*, void*);
+  static void cb_PathCam(Fl_Button*, void*);
 public:
   void show();
   void DBG_cb();
-  void NewButton_cb();
+  void FreeCam_cb();
+  void PathCam_cb();
 };
 #endif

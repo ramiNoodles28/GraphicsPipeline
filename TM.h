@@ -15,6 +15,8 @@ public:
 	void setRectangle(float rw, float rh); // makes a basic rectangle mesh
 	void allocateMemory(); // allocates memory for new meshes
 	void loadBin(char *fname); // loads mesh from binary file
+	//void setCylinder(float rad, float height, float radDivs);
+	//void setSphere(float rad, float radDivs, float latDivs)
 
 	V3 centroid(); // gets centroid of mesh
 	void translate(V3 tv); // translates all points on mesh my given vector

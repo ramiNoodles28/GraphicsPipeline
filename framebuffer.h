@@ -13,7 +13,10 @@ class FrameBuffer : public Fl_Gl_Window {
 public:
 	unsigned int *pix; // pixel array
 	int w, h; // width and height of frame
+	int s; // scale of camera movement
+	PPC *cam;
 	FrameBuffer(int u0, int v0, int _w, int _h);
+	void addCam(PPC* c);
 	void draw();
 	void KeyboardHandle();
 	int handle(int guievent);

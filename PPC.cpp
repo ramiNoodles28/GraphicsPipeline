@@ -48,21 +48,20 @@ void PPC::setPose(V3 newC, V3 newVD, V3 newUpG) {
 } // set camera to new pose
 
 void PPC::pan(float theta) {
-	a = a.rotateAboutAxis(C, C - b, theta);
-	b = b.rotateAboutAxis(C, C - b, theta);
-	c = c.rotateAboutAxis(C, C - b, theta);
+	a = a.rotateDir(b * -1, theta);
+	c = c.rotateDir(b * -1, theta);
 } // pan camera (rotate about y axis of eye)
 
 void PPC::tilt(float theta) {
-	a = a.rotateAboutAxis(C, C + a, theta);
-	b = b.rotateAboutAxis(C, C + a, theta);
-	c = c.rotateAboutAxis(C, C + a, theta);
+	b = b.rotateDir(a, theta);
+	c = c.rotateDir(a, theta);
 } // tilt camera (rotate about x axis of eye)
 
 void PPC::roll(float theta) {
-	a = a.rotateAboutAxis(C, C + a ^ b, theta);
-	b = b.rotateAboutAxis(C, C + a ^ b, theta);
-	c = c.rotateAboutAxis(C, C + a ^ b, theta);
+	V3 fw = getViewDirection();
+	a = a.rotateDir(fw, theta);
+	b = b.rotateDir(fw, theta);
+	c = c.rotateDir(fw, theta);
 } // roll camera (rotate about z axis of eye)
 
 void PPC::zoom(float scale) {

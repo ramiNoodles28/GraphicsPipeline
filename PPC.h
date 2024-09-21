@@ -2,9 +2,9 @@
 
 #include <ostream>
 #include <istream>
+#include "framebuffer.h"
 using namespace std;
 #include "V3.h"
-#include "framebuffer.h"
 
 class PPC {
 public:
