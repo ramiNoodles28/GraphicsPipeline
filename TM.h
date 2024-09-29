@@ -6,12 +6,12 @@
 
 class TM{
 public:
-	V3 *verts, *colors, *normals;
+	V3 *verts, *colors, *bakedColors, *normals;
 	int onFlag;
 	int vertsN;
 	unsigned int *tris;
 	int trisN;
-	TM(): onFlag(1), verts(0), vertsN(0), tris(0), trisN(0), colors(0), normals(0) {}; // default constructor
+	TM(): onFlag(1), verts(0), vertsN(0), tris(0), trisN(0), colors(0), bakedColors(0), normals(0) {}; // default constructor
 	void setRectangle(float rw, float rh); // makes a basic rectangle mesh
 	void allocateMemory(); // allocates memory for new meshes
 	void loadBin(char *fname); // loads mesh from binary file
@@ -25,5 +25,10 @@ public:
 	TM boundingbox(); // creates a new bounding box mesh from given mesh
 	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
 	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
-	void lightMesh(V3 lv, float ka); // light the mesh from light vector and min lighting 
+
+	void resetAllColors(); // resets vert colors to original baked values
+	void setAllColors(V3 c); // sets all vertex colors to one color 
+	void lightMeshRGB(V3 lv, float ka); // light the mesh from light vector and min lighting 
+	void lightMeshBW(V3 lv, float ks, float ka); // light the mesh from light vector and min lighting 
+
 };

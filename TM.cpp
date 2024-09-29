@@ -12,6 +12,7 @@ void TM::allocateMemory() {
 
 	verts = new V3[vertsN];
 	colors = new V3[vertsN];
+	bakedColors = new V3[vertsN];
 	normals = new V3[vertsN];
 	tris = new unsigned int[3*trisN];
 
@@ -166,6 +167,14 @@ void TM::loadBin(char *fname) {
 	}
 	if (yn == 'y')
 		colors = new V3[vertsN];
+	
+	if (bakedColors) {
+		delete bakedColors;
+		bakedColors = 0;
+	}
+	if (yn == 'y')
+		bakedColors = new V3[vertsN];
+		
 	ifs.read(&yn, 1); // normals 3 floats
 	if (normals)
 		delete normals;
@@ -190,6 +199,9 @@ void TM::loadBin(char *fname) {
 	if (tris)
 		delete tris;
 	tris = new unsigned int[trisN * 3];
+	for (int i = 0; i < vertsN; i++) {
+		bakedColors[i] = colors[i];
+	}
 	ifs.read((char*)tris, trisN * 3 * sizeof(unsigned int)); // read tiangles
 	ifs.close();
 	cerr << "INFO: loaded " << vertsN << " verts, " << trisN << " tris from " << endl << "      " << fname << endl;
@@ -210,9 +222,31 @@ void TM::rotate(V3 aO, V3 aD, float theta) {
 		verts[vi] = verts[vi].rotateAboutAxis(aO, aD, theta);
 }
 
-void TM::lightMesh(V3 lv, float ka) {
+
+void TM::resetAllColors() {
+	for (int i = 0; i < vertsN; i++) {
+		colors[i] = bakedColors[i];
+	}
+}
+
+
+void TM::setAllColors(V3 c) {
+	if (!colors)
+		return;
+	for (int vi = 0; vi < vertsN; vi++)
+		colors[vi] = c;
+}
+
+void TM::lightMeshRGB(V3 lv, float ka) {
 	if (!colors)
 		return;
 	for (int vi = 0; vi < vertsN; vi++)
 		colors[vi] = colors[vi].lightColor(lv, ka, normals[vi]);
+}
+
+void TM::lightMeshBW(V3 lv, float ks, float ka) {
+	if (!colors)
+		return;
+	for (int vi = 0; vi < vertsN; vi++)
+		colors[vi] = V3(ks,ks,ks).lightColor(lv, ka, normals[vi]);
 }

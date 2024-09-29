@@ -159,7 +159,7 @@ unsigned int V3::getColor() {
 			fc = 1.0f;
 		rgb[ci] = (unsigned int) (255.0f * fc);
 	}
-	ret = 0xFF000000 + rgb[2] * 256 * 256 + rgb[1] * 256 + rgb[0];
+	ret = 0xFF000000 + (rgb[2] * 256 * 256) + (rgb[1] * 256) + rgb[0];
 	return ret;
 } // Get hex color (0xAABBGGRR) from RGB channels
 

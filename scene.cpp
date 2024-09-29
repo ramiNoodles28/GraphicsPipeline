@@ -43,6 +43,8 @@ void Scene::Render() {
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].renderTris(fb, ppc);
 		//tms[tmi].renderWF(fb, ppc);
+		tms[tmi].resetAllColors();
+		
 	}
 	fb->clearZB();
 	fb->redraw();
@@ -110,8 +112,8 @@ void Scene::FreeCam() {
 	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	//tms[1] = tms[0].boundingbox();
-	//tms[2].loadBin("geometry/teapot1k.bin");
-	//tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+	tms[2].loadBin("geometry/teapot1k.bin");
+	tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
 	//tms[3] = tms[2].boundingbox();
 	//tms[4].loadBin("geometry/teapot1k.bin");
 	//tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
@@ -120,11 +122,16 @@ void Scene::FreeCam() {
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
+	V3 lv(0, 1, 1);
 	while (true) {
-		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 1.0f);
+		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 1.0f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
 		//tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
 		//tms[4].translate(V3(1,0,0) * cos(t));
+		//tms[0].resetAllColors();
+		tms[0].lightMeshRGB(lv, 0.1f);
+		tms[2].lightMeshRGB(lv, 0.1f);
+		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), -2.0f);
 		Render();
 		fb->redraw();
 		Fl::check();
