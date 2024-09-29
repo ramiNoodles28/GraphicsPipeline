@@ -18,8 +18,8 @@ using namespace std;
 Scene::Scene() {
 	int u0 = 20;
 	int v0 = 40;
-	int h = 400;
-	int w = 600;
+	int h = 600;
+	int w = 900;
 	fb = new FrameBuffer(u0, v0, w, h);
 	fb->position(u0, v0);
 	fb->label("SW Framebuffer");
@@ -41,8 +41,10 @@ void Scene::Render() {
 		return;
 	fb->set(0xFFFFFFFF);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
-		tms[tmi].renderWF(fb, ppc);
+		tms[tmi].renderTris(fb, ppc);
+		//tms[tmi].renderWF(fb, ppc);
 	}
+	fb->clearZB();
 	fb->redraw();
 }
 
@@ -107,23 +109,22 @@ void Scene::FreeCam() {
 	fb->clear();
 	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-	tms[1] = tms[0].boundingbox();
-	tms[2].loadBin("geometry/teapot1k.bin");
-	tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
-	tms[3] = tms[2].boundingbox();
-	tms[4].loadBin("geometry/teapot1k.bin");
-	tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
-	tms[5] = tms[4].boundingbox();
+	//tms[1] = tms[0].boundingbox();
+	//tms[2].loadBin("geometry/teapot1k.bin");
+	//tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+	//tms[3] = tms[2].boundingbox();
+	//tms[4].loadBin("geometry/teapot1k.bin");
+	//tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
+	//tms[5] = tms[4].boundingbox();
 	Render();
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
 	while (true) {
-		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
-		tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
-		tms[4].translate(V3(1,0,0) * cos(t));
-
-
+		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 1.0f);
+		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
+		//tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
+		//tms[4].translate(V3(1,0,0) * cos(t));
 		Render();
 		fb->redraw();
 		Fl::check();

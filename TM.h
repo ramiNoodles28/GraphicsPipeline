@@ -23,5 +23,7 @@ public:
 	void scaleInPlace(float scf); // scales mesh by scalar factor
 	void rotate(V3 aO, V3 aD, float theta); // rotate mesh around given axis by theta degrees
 	TM boundingbox(); // creates a new bounding box mesh from given mesh
-	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh 
+	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
+	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
+	void lightMesh(V3 lv, float ka); // light the mesh from light vector and min lighting 
 };

@@ -32,4 +32,5 @@ public:
 
 	void setFromColor(unsigned int color); // Set V3 from hex color (0xAABBGGRR) to RGB channels
 	unsigned int getColor(); // Get hex color (0xAABBGGRR) from RGB channels
+	V3 lightColor(V3 lv, float ka, V3 normal); // apply lighting to color vector
 };

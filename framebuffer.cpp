@@ -13,6 +13,7 @@ FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	w = _w;
 	h = _h;
 	pix = new unsigned int[w*h];
+	zb = new float[w * h];
 	cam = NULL;
 	s = 1;
 }
@@ -266,6 +267,8 @@ void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
 		V3 cc = c0 + (c1 - c0)*t;
 		int u = (int)p[0];
 		int v = (int)p[1];
+		if (isFarther(u, v, p[2])) continue;
+		setZB(u, v, p[2]);
 		setGuarded(u, v, cc.getColor());
 	}
 }
@@ -278,22 +281,113 @@ void FrameBuffer::rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color) {
 
 void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color) {
 	V3 p(0, 0);
-	V3 mins(min(a[0], min(b[0], c[0])), min(a[1], min(b[1], c[1])));
-	V3 maxes(max(a[0], max(b[0], c[0])), max(a[1], max(b[1], c[1])));
+	V3 mins(floor(min(a[0], min(b[0], c[0]))),
+			floor(min(a[1], min(b[1], c[1]))));
+	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
+			 ceil(max(a[1], max(b[1], c[1]))));
 	for (p[1] = mins[1]; p[1] < maxes[1]; p[1]++) {
 		for (p[0] = mins[0]; p[0] < maxes[0]; p[0]++) {
 			float e0 = edgeFunction(a, b, p);
 			float e1 = edgeFunction(b, c, p);
 			float e2 = edgeFunction(c, a, p);
-
 			if (e0 >= 0 && e1 >= 0 && e2 >= 0) setGuarded(p[0], p[1], color);
 		}
 	}
 }
 
+void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2) {
+	V3 p(0, 0);
+	V3 mins(floor(min(a[0], min(b[0], c[0]))),
+			floor(min(a[1], min(b[1], c[1]))));
+	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
+			 ceil(max(a[1], max(b[1], c[1]))));
+	float triArea = edgeFunction(a, b, c);
+	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
+		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
+			if (!inBounds(p)) continue;
+			float e0 = edgeFunction(a, b, p);
+			float e1 = edgeFunction(b, c, p);
+			float e2 = edgeFunction(c, a, p);
+			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
+				float w0 = e0 / triArea;
+				float w1 = e1 / triArea;
+				float w2 = e2 / triArea;
+				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
+				if (isFarther(p[0], p[1], depth)) continue;
+				setZB(p[0], p[1], depth);
+				float R = w0 * c2[0] + w1 * c0[0] + w2 * c1[0];
+				float G = w0 * c2[1] + w1 * c0[1] + w2 * c1[1];
+				float B = w0 * c2[2] + w1 * c0[2] + w2 * c1[2];
+				V3 color = V3(R, G, B);
+				setGuarded(p[0], p[1], color.getColor());
+			}
+		}
+	}
+}
+/*
+void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2) {
+	// Calculate 1/w for each vertex
+	float w0_inv = 1.0f / a[3];  // Assuming a[3] is the homogeneous w value for vertex a
+	float w1_inv = 1.0f / b[3];  // Homogeneous w value for vertex b
+	float w2_inv = 1.0f / c[3];  // Homogeneous w value for vertex c
+
+	// Calculate the bounding box
+	V3 p(0, 0);
+	V3 mins(floor(min(a[0], min(b[0], c[0]))),
+		floor(min(a[1], min(b[1], c[1]))));
+	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
+		ceil(max(a[1], max(b[1], c[1]))));
+	float triArea = edgeFunction(a, b, c);
+	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
+		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
+
+			// Calculate edge functions for each vertex
+			float e0 = edgeFunction(b, c, p);  // Edge opposite to vertex a
+			float e1 = edgeFunction(c, a, p);  // Edge opposite to vertex b
+			float e2 = edgeFunction(a, b, p);  // Edge opposite to vertex c
+
+			// Check if point is inside the triangle
+			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
+
+				// Calculate barycentric coordinates
+				float w0 = e0 / triArea;
+				float w1 = e1 / triArea;
+				float w2 = e2 / triArea;
+
+				// Interpolate 1/w for the pixel
+				float w_inv_interpolated = w0 * w0_inv + w1 * w1_inv + w2 * w2_inv;
+				float w_interpolated = 1.0f / w_inv_interpolated;
+
+				// Interpolate depth using 1/w
+				float depth = (w0 * a[2] * w0_inv + w1 * b[2] * w1_inv + w2 * c[2] * w2_inv) * w_interpolated;
+
+				// Interpolate colors using 1/w
+				float r = w0 * c0[0] + w1 * c1[0] + w2 * c2[0];
+				float g = w0 * c0[1] + w1 * c1[1] + w2 * c2[1];
+				float b = w0 * c0[2] + w1 * c1[2] + w2 * c2[2];
+
+				V3 color = V3(r, g, b);
+
+				// Use the corrected depth value for Z-buffering
+				if (!isFarther(p[0], p[1], depth)) {
+					setGuarded(p[0], p[1], color.getColor());
+				}
+			}
+		}
+	}
+}
+*/
 float FrameBuffer::edgeFunction(V3 a, V3 b, V3 p) {
 	return p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
 } // returns if point is on right side of edge
+
+int FrameBuffer::isCCW(V3 a, V3 b, V3 c) {
+	return ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0;
+} // Calculate the signed area using the cross product
+
+int FrameBuffer::inBounds(V3 p) {
+	return !(p[0] < 0 || p[0] > w - 1 || p[1] < 0 || p[1] > h - 1);
+}
 
 
 void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, unsigned int color) {
@@ -312,3 +406,25 @@ void FrameBuffer::render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc) {
 	rasterize2DSegment(pp0, pp1, c0, c1);
 	return;
 }
+
+void FrameBuffer::clearZB() {
+	for (int uv = 0; uv < w * h; uv++)
+		zb[uv] = 0.0f;
+} // clear the z buffer
+
+
+int FrameBuffer::isFarther(int u, int v, float z) {
+	if (getZB(u, v) > z)
+		return 1;
+	return 0;
+} // check to override current pixel z buffer
+
+float FrameBuffer::getZB(int u, int v) {
+	return zb[(h - 1 - v) * w + u];
+} // get z buffer from pixel coordinate
+
+
+void FrameBuffer::setZB(int u, int v, float z) {
+	zb[(h - 1 - v) * w + u] = z;
+} // set z buffer at pixel coordinate
+

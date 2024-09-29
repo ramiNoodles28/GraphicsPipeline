@@ -162,3 +162,11 @@ unsigned int V3::getColor() {
 	ret = 0xFF000000 + rgb[2] * 256 * 256 + rgb[1] * 256 + rgb[0];
 	return ret;
 } // Get hex color (0xAABBGGRR) from RGB channels
+
+V3 V3::lightColor(V3 lv, float ka, V3 normal) {
+	V3& colorv = *this;
+	float kd = lv * normal;
+	kd = (kd < 0.0f) ? 0.0f : kd;
+	V3 ret = colorv * (ka + (1.0f - ka) * kd);
+	return ret;
+} // apply lighting to color vector
