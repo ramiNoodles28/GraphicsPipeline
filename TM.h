@@ -25,6 +25,7 @@ public:
 	TM boundingbox(); // creates a new bounding box mesh from given mesh
 	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
 	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
+	void renderTris(FrameBuffer* fb, PPC* ppc, V3 lv, float ka);
 
 	void resetAllColors(); // resets vert colors to original baked values
 	void setAllColors(V3 c); // sets all vertex colors to one color 

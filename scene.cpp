@@ -34,6 +34,10 @@ Scene::Scene() {
 
 	tmsN = 6;
 	tms = new TM[tmsN];
+
+	lightingMode = 0;
+	ka = 0.1f;
+	lv = V3(0, 1, 1);
 }
 
 void Scene::Render() {
@@ -41,9 +45,19 @@ void Scene::Render() {
 		return;
 	fb->set(0xFFFFFFFF);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
-		tms[tmi].renderTris(fb, ppc);
-		//tms[tmi].renderWF(fb, ppc);
 		tms[tmi].resetAllColors();
+		switch (lightingMode) {
+			case 1:
+				tms[tmi].lightMeshRGB(lv, ka);
+				tms[tmi].renderTris(fb, ppc);
+				break;
+			case 2:
+				tms[tmi].renderTris(fb, ppc, lv, ka);
+				break;
+			default:
+		  		tms[tmi].renderTris(fb, ppc);
+				break;
+		}
 		
 	}
 	fb->clearZB();
@@ -122,15 +136,11 @@ void Scene::FreeCam() {
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
-	V3 lv(0, 1, 1);
 	while (true) {
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 1.0f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
 		//tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
 		//tms[4].translate(V3(1,0,0) * cos(t));
-		//tms[0].resetAllColors();
-		tms[0].lightMeshRGB(lv, 0.1f);
-		tms[2].lightMeshRGB(lv, 0.1f);
 		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), -2.0f);
 		Render();
 		fb->redraw();
@@ -139,16 +149,18 @@ void Scene::FreeCam() {
 	}
 }
 
-void Scene::SM1() {
+void Scene::SM1() { 
 	cerr << "sm1" << endl;
-}
+	lightingMode = 0;
+} // No lighting, using only baked colors
 void Scene::SM2() {
 	cerr << "sm2" << endl;
-}
+	lightingMode = 1;
+} // Per Vertex Lighting
 void Scene::SM3() {
 	cerr << "sm3" << endl;
-
-}
+	lightingMode = 2;
+} // Per Pixel Lighting
 
 void Scene::loadCamsFromTxt(char *fname, vector<PPC>& ppcs, int camNum) {
 	ifstream ifs(fname);
@@ -223,7 +235,7 @@ void Scene::PathCam() {
 
 		for (float t = 0.0f; t < loop; t += 0.6f) {
 			ostringstream oss;
-			oss << "camFrames/frame" << setw(4) << setfill('0') << frame << ".tiff";
+			//oss << "camFrames/frame" << setw(4) << setfill('0') << frame << ".tiff";
 			string img = oss.str();
 			fb->saveAsTiff((char*)img.c_str());
 			tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);

@@ -15,6 +15,11 @@ public:
 	PPC *ppc;
 	TM *tms;
 	int tmsN;
+
+	int lightingMode;
+	float ka;
+	V3 lv;
+
 	Scene();
 	void DBG();
 	void FreeCam();

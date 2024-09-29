@@ -129,7 +129,6 @@ void TM::renderWF(FrameBuffer *fb, PPC *ppc) {
 void TM::renderTris(FrameBuffer* fb, PPC* ppc) {
 	if (!onFlag)
 		return;
-
 	// go over all triangles
 	for (int tri = 0; tri < trisN; tri++) {
 		V3 tvs[3];
@@ -141,6 +140,25 @@ void TM::renderTris(FrameBuffer* fb, PPC* ppc) {
 			ppc->project(tvs[vi], pvs[vi]);
 		}
 		fb->rasterizeTris(pvs[0], pvs[1], pvs[2], colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]);
+	}
+}
+
+void TM::renderTris(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
+	if (!onFlag)
+		return;
+	// go over all triangles
+	for (int tri = 0; tri < trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tris[3 * tri + vi];
+			tvs[vi] = verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		fb->rasterizeTris(pvs[0], pvs[1], pvs[2], 
+			colors[vinds[0]], colors[vinds[1]], colors[vinds[2]],
+			normals[vinds[0]], normals[vinds[1]], normals[vinds[2]], lv, ka);
 	}
 }
 

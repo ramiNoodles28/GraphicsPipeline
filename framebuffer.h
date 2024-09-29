@@ -31,7 +31,8 @@ public:
 	void rasterizeCircle(V3 center, float radius, unsigned int color);
 	void rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color);
 	void rasterizeTris(V3 p0, V3 p1, V3 p2, unsigned int color);
-	void rasterizeTris(V3 p0, V3 p1, V3 p2, V3 c0, V3 c1, V3 c2);
+	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2);
+	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2, V3 n0, V3 n1, V3 n2, V3 lv, float ka);
 	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
 	int isCCW(V3 a, V3 b, V3 c);
 	int inBounds(V3 p);
