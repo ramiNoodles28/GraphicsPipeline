@@ -143,7 +143,7 @@ void TM::renderTris(FrameBuffer* fb, PPC* ppc) {
 	}
 }
 
-void TM::renderTris(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
+void TM::renderTrisDirLight(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
 	if (!onFlag)
 		return;
 	// go over all triangles
@@ -156,11 +156,33 @@ void TM::renderTris(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
 			tvs[vi] = verts[vinds[vi]];
 			ppc->project(tvs[vi], pvs[vi]);
 		}
-		fb->rasterizeTris(pvs[0], pvs[1], pvs[2], 
-			colors[vinds[0]], colors[vinds[1]], colors[vinds[2]],
-			normals[vinds[0]], normals[vinds[1]], normals[vinds[2]], lv, ka);
+		fb->rasterizeTrisDirLight(pvs[0], pvs[1], pvs[2],
+			M33(colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]),
+			M33(normals[vinds[0]], normals[vinds[1]], normals[vinds[2]]), lv, ka);
 	}
-}
+} // render mesh with directional light
+
+void TM::renderTrisPointLight(FrameBuffer* fb, PPC* ppc, V3 lp, float ka) {
+	if (!onFlag)
+		return;
+	// go over all triangles
+	V3 plp;
+	ppc->project(lp, plp);
+	for (int tri = 0; tri < trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tris[3 * tri + vi];
+			tvs[vi] = verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		fb->rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
+			M33(tvs[0], tvs[1], tvs[2]),
+			M33(colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]),
+			M33(normals[vinds[0]], normals[vinds[1]], normals[vinds[2]]), lp, ka);
+	}
+} // render mesh with point light
 
 void TM::loadBin(char *fname) {
 	ifstream ifs(fname, ios::binary);
@@ -255,11 +277,18 @@ void TM::setAllColors(V3 c) {
 		colors[vi] = c;
 }
 
-void TM::lightMeshRGB(V3 lv, float ka) {
+void TM::lightMeshDirRGB(V3 lv, float ka) {
 	if (!colors)
 		return;
 	for (int vi = 0; vi < vertsN; vi++)
 		colors[vi] = colors[vi].lightColor(lv, ka, normals[vi]);
+}
+
+void TM::lightMeshPointRGB(V3 lp, float ka) {
+	if (!colors)
+		return;
+	for (int vi = 0; vi < vertsN; vi++)
+		colors[vi] = colors[vi].lightColor((lp - verts[vi]).normalize(), ka, normals[vi]);
 }
 
 void TM::lightMeshBW(V3 lv, float ks, float ka) {

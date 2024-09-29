@@ -42,6 +42,12 @@ void GUI::cb_SM3_i(Fl_Button*, void*) {
 void GUI::cb_SM3(Fl_Button* o, void* v) {
     ((GUI*)(o->parent()->user_data()))->cb_SM3_i(o, v);
 }
+void GUI::cb_LightType_i(Fl_Button*, void*) {
+    LightType_cb();
+}
+void GUI::cb_LightType(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_LightType_i(o, v);
+}
 ////////
 #include "scene.h"
 
@@ -68,6 +74,9 @@ GUI::GUI() {
     } // Fl_Return_Button* o
     { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM3: Per Pixel");
       o->callback((Fl_Callback*)cb_SM3);
+    } // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(2 * p + w, 3 * (p + h) + p, 2 * w, h, "Cycle Light Type");
+  	  o->callback((Fl_Callback*)cb_LightType);
     } // Fl_Return_Button* o
     uiw->end();
   } // Fl_Double_Window* uiw
@@ -102,4 +111,7 @@ void GUI::SM2_cb() {
 }
 void GUI::SM3_cb() {
     scene->SM3();
+}
+void GUI::LightType_cb() {
+    scene->LightType();
 }

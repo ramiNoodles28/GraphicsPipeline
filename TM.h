@@ -25,11 +25,14 @@ public:
 	TM boundingbox(); // creates a new bounding box mesh from given mesh
 	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
 	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
-	void renderTris(FrameBuffer* fb, PPC* ppc, V3 lv, float ka);
+	void renderTrisDirLight(FrameBuffer* fb, PPC* ppc, V3 lv, float ka); // render mesh with directional light
+	void renderTrisPointLight(FrameBuffer* fb, PPC* ppc, V3 lp, float ka); // render mesh with point light
 
 	void resetAllColors(); // resets vert colors to original baked values
 	void setAllColors(V3 c); // sets all vertex colors to one color 
-	void lightMeshRGB(V3 lv, float ka); // light the mesh from light vector and min lighting 
+	void lightMeshDirRGB(V3 lv, float ka); // directionally light the mesh from light vector and min lighting 
+	void lightMeshPointRGB(V3 lp, float ka); // point light the mesh from light point and min lighting 
+
 	void lightMeshBW(V3 lv, float ks, float ka); // light the mesh from light vector and min lighting 
 
 };

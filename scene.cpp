@@ -35,9 +35,11 @@ Scene::Scene() {
 	tmsN = 6;
 	tms = new TM[tmsN];
 
-	lightingMode = 0;
+	lightingMode = 2;
 	ka = 0.1f;
-	lv = V3(0, 1, 1);
+	kd = 1.0f;
+	lv = V3(0, 0, 1);
+	lp = V3(0, 0, -120);
 }
 
 void Scene::Render() {
@@ -46,68 +48,41 @@ void Scene::Render() {
 	fb->set(0xFFFFFFFF);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
-		switch (lightingMode) {
+		tms[tmi].renderWF(fb, ppc);
+		switch (lightType % 2) {
+		case 0: // point light
+			fb->renderPoint(lp, 3.5, V3(0, 0, 0), ppc);
+			switch (lightingMode) {
 			case 1:
-				tms[tmi].lightMeshRGB(lv, ka);
+				tms[tmi].lightMeshPointRGB(lp, ka);
 				tms[tmi].renderTris(fb, ppc);
 				break;
 			case 2:
-				tms[tmi].renderTris(fb, ppc, lv, ka);
+				tms[tmi].renderTrisPointLight(fb, ppc, lp, ka);
 				break;
 			default:
-		  		tms[tmi].renderTris(fb, ppc);
+				tms[tmi].renderTris(fb, ppc);
 				break;
+			}
+			break;
+		default: // directional light
+			switch (lightingMode) {
+			case 1:
+				tms[tmi].lightMeshDirRGB(lv, ka);
+				tms[tmi].renderTris(fb, ppc);
+				break;
+			case 2:
+				tms[tmi].renderTrisDirLight(fb, ppc, lv, ka);
+				break;
+			default:
+				tms[tmi].renderTris(fb, ppc);
+				break;
+			}
+			break;
 		}
-		
 	}
 	fb->clearZB();
 	fb->redraw();
-}
-
-void Scene::DBG() {
-	cerr << endl;
-
-	{
-		tms[0].loadBin("geometry/teapot1K.bin");
-		V3 centroid;
-		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-		tms[1] = tms[0].boundingbox();
-		tms[2] = tms[1].boundingbox();
-		tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
-		//tms[3] = tms[2].boundingbox();
-		//tms[3].translate(V3(-150, 0.0f, 150.0f) - tms[3].centroid());
-
-		centroid = V3(0.0f, 0.0f, -150.0f);
-		
-		V3 newC = centroid + V3(100.0f, 150.0f, 0.0f);
-		V3 newVD = (centroid - newC).normalize();
-		V3 newUpG(0.0f, 1.0f, 0.0f);
-		PPC ppc0 = *ppc;
-		ppc->setPose(newC, newVD, newUpG);
-		//ppc->pan(-30.0f);
-		PPC ppc1 = *ppc;
-		Render();
-		fb->redraw();
-
-		int loop = 1800;
-		
-		for (int fi = 8; fi < loop; fi++) {
-			Render();
-			//ppc2.renderWF(fb, 10.0f, ppc);
-			fb->redraw();
-			Fl::check();
-			//ppc2.translate(V3(.1f, 0.0f, 0.0f));
-			//tms[0].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
-			//tms[1].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
-			//tms[0].scaleInPlace(0.999f);
-			//ppc->translate(V3(1.0f, 0.0f, 0.0f));
-			float t = (float) fi / (float) loop;
-			//ppc->pan(0.1f);
-			ppc->interpCam(ppc0, ppc1, t, easeOutBounce);
-		}
-		*ppc = ppc0;
-		return;
-	}
 }
 
 void Scene::FreeCam() {
@@ -126,22 +101,24 @@ void Scene::FreeCam() {
 	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	//tms[1] = tms[0].boundingbox();
-	tms[2].loadBin("geometry/teapot1k.bin");
-	tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+	//tms[2].loadBin("geometry/teapot1k.bin");
+	//tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
 	//tms[3] = tms[2].boundingbox();
 	//tms[4].loadBin("geometry/teapot1k.bin");
 	//tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
 	//tms[5] = tms[4].boundingbox();
-	Render();
+	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
 	while (true) {
-		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 1.0f);
+		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.5f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
 		//tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
 		//tms[4].translate(V3(1,0,0) * cos(t));
-		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), -2.0f);
+		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 1.0f);
+		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 1.0f);
+		
 		Render();
 		fb->redraw();
 		Fl::check();
@@ -150,21 +127,37 @@ void Scene::FreeCam() {
 }
 
 void Scene::SM1() { 
-	cerr << "sm1" << endl;
+	cerr << "sm1: no lighting" << endl;
 	lightingMode = 0;
 } // No lighting, using only baked colors
 void Scene::SM2() {
-	cerr << "sm2" << endl;
+	cerr << "sm2: per vertex lighting" << endl;
 	lightingMode = 1;
 } // Per Vertex Lighting
 void Scene::SM3() {
-	cerr << "sm3" << endl;
+	cerr << "sm3: per pixel lighting" << endl;
 	lightingMode = 2;
 } // Per Pixel Lighting
+void Scene::LightType() {
+	lightType++;
+	switch (lightType % 2) {
+		case 0:
+			cerr << "Point Light" << endl;
+			break;
+		default:
+			cerr << "Directional Light" << endl;
+	}
+} // Per Pixel Lighting
 
-void Scene::loadCamsFromTxt(char *fname, vector<PPC>& ppcs, int camNum) {
+
+
+
+/////////////////// funny stuff
+
+
+void Scene::loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum) {
 	ifstream ifs(fname);
-	if (!ifs.is_open())	{
+	if (!ifs.is_open()) {
 		cerr << "ERROR: Could not open file: " << fname << endl;
 		return;
 	}
@@ -175,9 +168,51 @@ void Scene::loadCamsFromTxt(char *fname, vector<PPC>& ppcs, int camNum) {
 	ifs.close();
 }
 
+void Scene::DBG() {
+	cerr << endl;
 
+	{
+		tms[0].loadBin("geometry/teapot1K.bin");
+		V3 centroid;
+		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+		tms[1] = tms[0].boundingbox();
+		tms[2] = tms[1].boundingbox();
+		tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
+		//tms[3] = tms[2].boundingbox();
+		//tms[3].translate(V3(-150, 0.0f, 150.0f) - tms[3].centroid());
 
-/////////////////// funny stuff
+		centroid = V3(0.0f, 0.0f, -150.0f);
+
+		V3 newC = centroid + V3(100.0f, 150.0f, 0.0f);
+		V3 newVD = (centroid - newC).normalize();
+		V3 newUpG(0.0f, 1.0f, 0.0f);
+		PPC ppc0 = *ppc;
+		ppc->setPose(newC, newVD, newUpG);
+		//ppc->pan(-30.0f);
+		PPC ppc1 = *ppc;
+		Render();
+		fb->redraw();
+
+		int loop = 1800;
+
+		for (int fi = 8; fi < loop; fi++) {
+			Render();
+			//ppc2.renderWF(fb, 10.0f, ppc);
+			fb->redraw();
+			Fl::check();
+			//ppc2.translate(V3(.1f, 0.0f, 0.0f));
+			//tms[0].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
+			//tms[1].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
+			//tms[0].scaleInPlace(0.999f);
+			//ppc->translate(V3(1.0f, 0.0f, 0.0f));
+			float t = (float)fi / (float)loop;
+			//ppc->pan(0.1f);
+			ppc->interpCam(ppc0, ppc1, t, easeOutBounce);
+		}
+		*ppc = ppc0;
+		return;
+	}
+}
 
 void Scene::RotatingPoints() {
 	V3 xAx(1, 0, 0);

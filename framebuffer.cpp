@@ -196,9 +196,7 @@ void FrameBuffer::set(int u, int v, unsigned int col) {
 	pix[(h - 1 - v)*w + u] = col;
 }
 
-
-void FrameBuffer::rasterizeRectangle(int u0, int v0, int rw, int rh,
-	unsigned int col) {
+void FrameBuffer::rasterizeRectangle(int u0, int v0, int rw, int rh,unsigned int col) {
 	if (!clipRectangle(u0, v0, rw, rh))
 		return;
 	for (int v = v0; v < v0 + rh; v++) {
@@ -229,8 +227,7 @@ int FrameBuffer::clipRectangle(int& u0, int& v0, int& rw, int& rh) {
 	return 1;
 } // return 0 if entire rectangle is off screen
 
-void FrameBuffer::rasterizeCircle(V3 center, float radius,
-	unsigned int color) {
+void FrameBuffer::rasterizeCircle(V3 center, float radius, unsigned int color) {
 	int u0, v0, rw, rh;
 	u0 = (int)(center[0] - radius + 0.5f);
 	v0 = (int)(center[1] - radius + 0.5f);
@@ -245,7 +242,7 @@ void FrameBuffer::rasterizeCircle(V3 center, float radius,
 			float d2 = (pixCenter - center)*(pixCenter - center);
 			if (d2 > r2)
 				continue;
-			set(u, v, color);
+			setGuarded(u, v, color);
 		}
 	}
 }
@@ -315,7 +312,7 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2) {
 	}
 }
 
-void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2, V3 n0, V3 n1, V3 n2, V3 lv, float ka) {
+void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka) {
 	V3 p(0, 0);
 	V3 mins(floor(min(a[0], min(b[0], c[0]))),
 		floor(min(a[1], min(b[1], c[1]))));
@@ -332,13 +329,49 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2, V3 n0, V3
 				float w0 = e0 / triArea;
 				float w1 = e1 / triArea;
 				float w2 = e2 / triArea;
+				V3 w(w1, w2, w0);
 				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
 				if (isFarther(p[0], p[1], depth)) continue;
 				setZB(p[0], p[1], depth);
-				//V3 pixelPos = a * w0 + b * w1 + c * w2;
-				V3 pixelNormal = (n2 * w0 + n0 * w1 + n1 * w2).normalize();
-				V3 baseColor = c2 * w0 + c0 * w1 + c1 * w2;
+				V3 pixelNormal = (norms ^ w).normalize();
+				V3 baseColor = (color ^ w);
 				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
+				setGuarded(p[0], p[1], pixelColor.getColor());
+			}
+		}
+	}
+}
+
+void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, V3 lp, float ka) {
+	V3 p(0, 0);
+	V3 mins(floor(min(a[0], min(b[0], c[0]))),
+			floor(min(a[1], min(b[1], c[1]))));
+	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
+			 ceil(max(a[1], max(b[1], c[1]))));
+	float triArea = edgeFunction(a, b, c);
+	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
+		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
+			if (!inBounds(p)) continue;
+			float e0 = edgeFunction(a, b, p);
+			float e1 = edgeFunction(b, c, p);
+			float e2 = edgeFunction(c, a, p);
+			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
+				float w0 = e1 / triArea;
+				float w1 = e2 / triArea;
+				float w2 = e0 / triArea;
+				V3 w(w0, w1, w2);
+				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
+				if (isFarther(p[0], p[1], depth)) continue;
+				setZB(p[0], p[1], depth);
+				V3 pixelNormal = (norms ^ w).normalize();
+				V3 baseColor = (color ^ w);
+				V3 pixelPos = (verts ^ w);
+				V3 lv = (lp - pixelPos).normalize();
+				float dist = (lp - pixelPos).length();
+				float atten = 1.0 / (0.05 * dist * dist);
+				float diffuse = max(0.0f, pixelNormal * lv);
+				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
+				pixelColor = baseColor * diffuse * atten + (baseColor * ka);
 				setGuarded(p[0], p[1], pixelColor.getColor());
 			}
 		}
@@ -373,6 +406,15 @@ void FrameBuffer::render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc) {
 		return;
 	rasterize2DSegment(pp0, pp1, c0, c1);
 	return;
+}
+
+void FrameBuffer::renderPoint(V3 p, float r, V3 c, PPC *ppc) {
+	V3 pp;
+	float z = 1.0f/p[2];
+	if (!ppc->project(p, pp) || !inBounds(pp)) return;
+	if (!isFarther(pp[0], pp[1], z)) return;
+	setZB(pp[0], pp[1], z);
+	rasterizeCircle(pp, r, c.getColor());
 }
 
 void FrameBuffer::clearZB() {

@@ -24,6 +24,8 @@ private:
   static void cb_SM2(Fl_Button*, void*);
   inline void cb_SM3_i(Fl_Button*, void*);
   static void cb_SM3(Fl_Button*, void*);
+  inline void cb_LightType_i(Fl_Button*, void*);
+  static void cb_LightType(Fl_Button*, void*);
 public:
   void show();
   void DBG_cb();
@@ -32,5 +34,6 @@ public:
   void SM1_cb();
   void SM2_cb();
   void SM3_cb();
+  void LightType_cb();
 };
 #endif

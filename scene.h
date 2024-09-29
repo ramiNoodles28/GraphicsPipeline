@@ -17,8 +17,11 @@ public:
 	int tmsN;
 
 	int lightingMode;
+	int lightType;
 	float ka;
+	float kd;
 	V3 lv;
+	V3 lp;
 
 	Scene();
 	void DBG();
@@ -27,6 +30,7 @@ public:
 	void SM1();
 	void SM2();
 	void SM3();
+	void LightType();
 
 	void Render();
 	void loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum);

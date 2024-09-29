@@ -31,8 +31,9 @@ public:
 	void rasterizeCircle(V3 center, float radius, unsigned int color);
 	void rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color);
 	void rasterizeTris(V3 p0, V3 p1, V3 p2, unsigned int color);
-	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2);
-	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2, V3 n0, V3 n1, V3 n2, V3 lv, float ka);
+	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2); // unlit vector interpolated raster
+	void rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka); // directionally lit per pixel raster
+	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, V3 lp, float ka);  // point lit per pixel raster
 	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
 	int isCCW(V3 a, V3 b, V3 c);
 	int inBounds(V3 p);
@@ -40,6 +41,7 @@ public:
 	void rasterize2DSegment(V3 p0, V3 p1, unsigned int color);
 	void rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1);
 	void render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc);
+	void renderPoint(V3 p, float r, V3 c, PPC* ppc);
 
 	void clearZB(); // clear the z buffer
 	int isFarther(int u, int v, float z); // check to override current pixel z buffer
