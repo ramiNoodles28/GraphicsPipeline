@@ -22,20 +22,52 @@ void GUI::cb_PathCam_i(Fl_Button*, void*) {
 void GUI::cb_PathCam(Fl_Button* o, void* v) {
     ((GUI*)(o->parent()->user_data()))->cb_PathCam_i(o, v);
 }
+
+//////////
+void GUI::cb_SM1_i(Fl_Button*, void*) {
+    SM1_cb();
+}
+void GUI::cb_SM1(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_SM1_i(o, v);
+}
+void GUI::cb_SM2_i(Fl_Button*, void*) {
+    SM2_cb();
+}
+void GUI::cb_SM2(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_SM2_i(o, v);
+}
+void GUI::cb_SM3_i(Fl_Button*, void*) {
+    SM3_cb();
+}
+void GUI::cb_SM3(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_SM3_i(o, v);
+}
+////////
 #include "scene.h"
 
 GUI::GUI() {
-  { uiw = new Fl_Double_Window(200, 250, "GUI");
+    int h = 30; int w = 80; int p = 15;
+  { uiw = new Fl_Double_Window(300, 250, "GUI");
     uiw->user_data((void*)(this));
-    { Fl_Button* o = new Fl_Button(15, 15, 100, 50, "DBG");
+    { Fl_Button* o = new Fl_Button(p, p, w, h, "DBG");
       o->selection_color(FL_DARK_RED);
       o->callback((Fl_Callback*)cb_DBG);
     } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(15, 80, 100, 50, "Free Cam");
+    { Fl_Button* o = new Fl_Button(p, (p + h) + p, w, h, "Free Cam");
       o->callback((Fl_Callback*)cb_FreeCam);
     } // Fl_Return_Button* o
-    { Fl_Button* o = new Fl_Button(15, 145, 100, 50, "Path Cam");
+    { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, w, h, "Path Cam");
   	  o->callback((Fl_Callback*)cb_PathCam);
+    } // Fl_Return_Button* o
+        // lighting buttons
+    { Fl_Button* o = new Fl_Button(2 * p + w, p, 2 * w, h, "SM1: No Lighting");
+  	  o->callback((Fl_Callback*)cb_SM1);
+    } // Fl_Button* o
+    { Fl_Button* o = new Fl_Button(2 * p + w, (p + h) + p, 2 * w, h, "SM2: Per Vertex");
+      o->callback((Fl_Callback*)cb_SM2);
+    } // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM3: Per Pixel");
+      o->callback((Fl_Callback*)cb_SM3);
     } // Fl_Return_Button* o
     uiw->end();
   } // Fl_Double_Window* uiw
@@ -60,4 +92,14 @@ void GUI::FreeCam_cb() {
 
 void GUI::PathCam_cb() {
     scene->PathCam();
+}
+
+void GUI::SM1_cb() {
+    scene->SM1();
+}
+void GUI::SM2_cb() {
+    scene->SM2();
+}
+void GUI::SM3_cb() {
+    scene->SM3();
 }

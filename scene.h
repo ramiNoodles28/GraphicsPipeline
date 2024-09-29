@@ -18,10 +18,15 @@ public:
 	Scene();
 	void DBG();
 	void FreeCam();
-	void PathCam();
+	
+	void SM1();
+	void SM2();
+	void SM3();
+
 	void Render();
 	void loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum);
 
+	void PathCam();
 	void RotatingPoints(); // Generate points rotated about an axis and save to file
 	void NameCycle(); // rasterize my name and have it translate across frame
 };
