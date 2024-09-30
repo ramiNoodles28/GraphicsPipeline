@@ -20,16 +20,17 @@ public:
 	int lightType;
 	float ka;
 	float kd;
-	V3 lv;
-	V3 lp;
+	V3 lv, lp, lp1;
 
 	Scene();
 	void DBG();
 	void FreeCam();
-	
+
+	void LightControl();
 	void SM1();
 	void SM2();
 	void SM3();
+	void SM23();
 	void LightType();
 
 	void Render();

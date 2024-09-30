@@ -18,8 +18,8 @@ using namespace std;
 Scene::Scene() {
 	int u0 = 20;
 	int v0 = 40;
-	int h = 600;
-	int w = 900;
+	int h = 480;
+	int w = 640;
 	fb = new FrameBuffer(u0, v0, w, h);
 	fb->position(u0, v0);
 	fb->label("SW Framebuffer");
@@ -32,14 +32,16 @@ Scene::Scene() {
 	gui->show();
 	gui->uiw->position(u0, v0 + fb->h + v0);
 
-	tmsN = 6;
+	tmsN = 2;
 	tms = new TM[tmsN];
 
-	lightingMode = 2;
+	lightingMode = 0;
+	lightType = 0;
 	ka = 0.1f;
 	kd = 1.0f;
 	lv = V3(0, 0, 1);
-	lp = V3(0, 0, -120);
+	lp = V3(0, 0, -110);
+	lp1 = V3(-150.0f, 0, -110);
 }
 
 void Scene::Render() {
@@ -48,10 +50,11 @@ void Scene::Render() {
 	fb->set(0xFFFFFFFF);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
-		tms[tmi].renderWF(fb, ppc);
+		//tms[tmi].renderWF(fb, ppc);
 		switch (lightType % 2) {
 		case 0: // point light
 			fb->renderPoint(lp, 3.5, V3(0, 0, 0), ppc);
+			fb->renderPoint(lp1, 3.5, V3(0, 0, 0), ppc);
 			switch (lightingMode) {
 			case 1:
 				tms[tmi].lightMeshPointRGB(lp, ka);
@@ -60,6 +63,12 @@ void Scene::Render() {
 			case 2:
 				tms[tmi].renderTrisPointLight(fb, ppc, lp, ka);
 				break;
+			case 3:
+				if (tmi == 0) tms[tmi].renderTrisPointLight(fb, ppc, lp, ka);
+				else {
+					tms[tmi].lightMeshPointRGB(lp1, ka);
+					tms[tmi].renderTris(fb, ppc);
+				} break;
 			default:
 				tms[tmi].renderTris(fb, ppc);
 				break;
@@ -87,7 +96,7 @@ void Scene::Render() {
 
 void Scene::FreeCam() {
 	cerr << "INFO: pressed Free Cam button on GUI" << endl;
-	cerr << "Contols: "
+	cerr << "Controls: "
 			"\nW - Forward "
 			"\nS - Backward "
 			"\nA - Left "
@@ -96,17 +105,13 @@ void Scene::FreeCam() {
 			"\nE - Down "
 			"\nZ/X - Roll "
 			"\nUp/Down Arrow - Tilt "
-			"\nLeft/Right Arrow - Pan" << endl;
+			"\nLeft/Right Arrow - Pan"
+			"\nScroll Wheel - Zoom" << endl;
 	fb->clear();
 	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-	//tms[1] = tms[0].boundingbox();
-	//tms[2].loadBin("geometry/teapot1k.bin");
-	//tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
-	//tms[3] = tms[2].boundingbox();
-	//tms[4].loadBin("geometry/teapot1k.bin");
-	//tms[4].translate(V3(150, 0.0f, -150.0f) - tms[4].centroid());
-	//tms[5] = tms[4].boundingbox();
+	tms[1].loadBin("geometry/teapot1k.bin");
+	tms[1].translate(V3(-150, 0.0f, -150.0f) - tms[1].centroid());
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
@@ -114,18 +119,38 @@ void Scene::FreeCam() {
 	while (true) {
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.5f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
-		//tms[2].scaleInPlace(1.0f + 0.01f * sin(t));
-		//tms[4].translate(V3(1,0,0) * cos(t));
-		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 1.0f);
-		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 1.0f);
-		
+		//tms[1].scaleInPlace(1.0f + 0.01f * sin(t));
+		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 2.0f);
+		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 2.0f);
+		lp1 = lp1.rotateAboutAxis(tms[1].centroid(), V3(0, 1, 0), 2.0f);
 		Render();
 		fb->redraw();
 		Fl::check();
 		t += 0.1;
 	}
 }
+void Scene::LightControl() {
+	cerr << "INFO: pressed Light Control button on GUI" << endl;
+	cerr << "Point Light Controls: "
+		"\nI - Forward "
+		"\nK - Backward "
+		"\nJ - Left "
+		"\nL - Right"
+		"\nU - Up "
+		"\nP - Down "  << endl;
+	fb->clear();
+	tms[0].loadBin("geometry/teapot1K.bin");
+	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	lightType = 0;
+	fb->lp = lp;
+	while (true) {
+		lp = fb->lp;
 
+		Render();
+		fb->redraw();
+		Fl::check();
+	}
+}
 void Scene::SM1() { 
 	cerr << "sm1: no lighting" << endl;
 	lightingMode = 0;
@@ -138,9 +163,13 @@ void Scene::SM3() {
 	cerr << "sm3: per pixel lighting" << endl;
 	lightingMode = 2;
 } // Per Pixel Lighting
+void Scene::SM23() {
+	cerr << "sm2 & sm3" << endl;
+	lightingMode = 3;
+} // Per Pixel Lighting
 void Scene::LightType() {
 	lightType++;
-	switch (lightType % 2) {
+	switch (lightType % 3) {
 		case 0:
 			cerr << "Point Light" << endl;
 			break;

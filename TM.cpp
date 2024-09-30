@@ -139,7 +139,7 @@ void TM::renderTris(FrameBuffer* fb, PPC* ppc) {
 			tvs[vi] = verts[vinds[vi]];
 			ppc->project(tvs[vi], pvs[vi]);
 		}
-		fb->rasterizeTris(pvs[0], pvs[1], pvs[2], colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]);
+		fb->rasterizeTris(pvs[0], pvs[1], pvs[2], M33(colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]));
 	}
 }
 

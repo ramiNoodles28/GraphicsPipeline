@@ -16,6 +16,9 @@ FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	zb = new float[w * h];
 	cam = NULL;
 	s = 1;
+	lightType = 0;
+	lv = V3(0, 0, 1);
+	lp = V3(0, 0, -110);
 }
 
 void FrameBuffer::addCam(PPC *c) {
@@ -56,77 +59,95 @@ int FrameBuffer::handle(int event) {
 void FrameBuffer::KeyboardHandle() {
 	int key = Fl::event_key();
 	switch (key) {
-	case 'w':  // ASCII value for 'w'
+	case 'w':  
 	case 'W': {
-		//cerr << "INFO: pressed W (move forward) : " << cam->C << endl;
 		cam->translate(cam->getViewDirection() * s);
 		break;
 	}
-	case 'a':  // ASCII value for 'a'
+	case 'a':  
 	case 'A': {
-		//cerr << "INFO: pressed A (move left) : " << cam->C << endl;
 		cam->translate(cam->a.normalize() * -s);
 		break;
 	}
-	case 's':  // ASCII value for 's'
+	case 's':  
 	case 'S': {
-		//cerr << "INFO: pressed S (move backwards) : " << cam->C << endl;
 		cam->translate(cam->getViewDirection() * -s);
 		break;
 	}
-	case 'd':  // ASCII value for 'd'
+	case 'd':
 	case 'D': {
-		//cerr << "INFO: pressed D (move right) : " << cam->C << endl;
 		cam->translate(cam->a.normalize() * s);
 		break;
 	}
-	case 'q':  // ASCII value for 'q'
+	case 'q':  
 	case 'Q': {
-		//cerr << "INFO: pressed Q (move down) : " << cam->C << endl;
 		cam->translate(V3(0, -s, 0));
 		break;
 	}
-	case 'e':  // ASCII value for 'd'
+	case 'e':
 	case 'E': {
-		//cerr << "INFO: pressed E (move up) : " << cam->C << endl;
 		cam->translate(V3(0, s, 0));
 		break;
 	}
-	case 'z':  // ASCII value for 'z'
+	case 'z':
 	case 'Z': {
-		//cerr << "INFO: pressed Z (roll+) : " << cam->C << endl;
 		cam->roll(s);
 		break;
 	}
-	case 'x':  // ASCII value for 'd'
+	case 'x': 
 	case 'X': {
-		//cerr << "INFO: pressed X (roll-) : " << cam->C << endl;
 		cam->roll(-s);
 		break;
 	}
 	case FL_Left: {
-		//cerr << "INFO: pressed left arrow key : " << cam->C << endl;
 		cam->pan(s);
 		break;
 	}
 	case FL_Right: {
-		//cerr << "INFO: pressed right arrow key : " << cam->C << endl;
 		cam->pan(-s);
 		break;
 	}
 	case FL_Up: {
-		//cerr << "INFO: pressed up arrow key : " << cam->C << endl;
 		cam->tilt(s);
 		break;
 	}
 	case FL_Down: {
-		//cerr << "INFO: pressed down arrow key : " << cam->C << endl;
 		cam->tilt(-s);
 		break;
 	}
 	case FL_Enter: {
 		cam->saveToTxt("camPaths.txt");
 		cerr << "INFO: pressed enter key : " << endl;
+		break;
+	}
+	case 'i':
+	case 'I': {
+		lp = lp + V3(0,0,-s);
+		break;
+	}
+	case 'j':
+	case 'J': {
+		lp = lp + V3(-s, 0, 0);
+		break;
+	}
+	case 'k':
+	case 'K': {
+		lp = lp + V3(0, 0, s);
+		break;
+	}
+	case 'l':
+	case 'L': {
+		lp = lp + V3(s, 0, 0);
+		break;
+	}
+	case 'u':
+	case 'U': {
+		lp = lp + V3(0, s, 0);
+		break;
+	}
+	case 'o':
+	case 'O': {
+		lp = lp + V3(0, -s, 0);
 		break;
 	}
 	default:
@@ -279,10 +300,10 @@ void FrameBuffer::rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color) {
 void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color) {
 	V3 cl(0, 0, 0);
 	cl.setFromColor(color);
-	rasterizeTris(a, b, c, cl, cl, cl);
+	rasterizeTris(a, b, c, M33(cl, cl, cl));
 }
 
-void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2) {
+void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 	V3 p(0, 0);
 	V3 mins(floor(min(a[0], min(b[0], c[0]))),
 			floor(min(a[1], min(b[1], c[1]))));
@@ -296,16 +317,14 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2) {
 			float e1 = edgeFunction(b, c, p);
 			float e2 = edgeFunction(c, a, p);
 			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
-				float w0 = e0 / triArea;
-				float w1 = e1 / triArea;
-				float w2 = e2 / triArea;
+				float w0 = e1 / triArea;
+				float w1 = e2 / triArea;
+				float w2 = e0 / triArea;
+				V3 w = V3(w0, w1, w2);
 				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
 				if (isFarther(p[0], p[1], depth)) continue;
 				setZB(p[0], p[1], depth);
-				float R = w0 * c2[0] + w1 * c0[0] + w2 * c1[0];
-				float G = w0 * c2[1] + w1 * c0[1] + w2 * c1[1];
-				float B = w0 * c2[2] + w1 * c0[2] + w2 * c1[2];
-				V3 color = V3(R, G, B);
+				V3 color = colors ^ w;
 				setGuarded(p[0], p[1], color.getColor());
 			}
 		}
@@ -326,10 +345,10 @@ void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, 
 			float e1 = edgeFunction(b, c, p);
 			float e2 = edgeFunction(c, a, p);
 			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
-				float w0 = e0 / triArea;
-				float w1 = e1 / triArea;
-				float w2 = e2 / triArea;
-				V3 w(w1, w2, w0);
+				float w0 = e1 / triArea;
+				float w1 = e2 / triArea;
+				float w2 = e0 / triArea;
+				V3 w(w0, w1, w2);
 				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
 				if (isFarther(p[0], p[1], depth)) continue;
 				setZB(p[0], p[1], depth);
@@ -368,7 +387,7 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color
 				V3 pixelPos = (verts ^ w);
 				V3 lv = (lp - pixelPos).normalize();
 				float dist = (lp - pixelPos).length();
-				float atten = 1.0 / (0.05 * dist * dist);
+				float atten = 1.0 / (0.005 * dist * dist);
 				float diffuse = max(0.0f, pixelNormal * lv);
 				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
 				pixelColor = baseColor * diffuse * atten + (baseColor * ka);
@@ -410,9 +429,9 @@ void FrameBuffer::render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc) {
 
 void FrameBuffer::renderPoint(V3 p, float r, V3 c, PPC *ppc) {
 	V3 pp;
-	float z = 1.0f/p[2];
 	if (!ppc->project(p, pp) || !inBounds(pp)) return;
-	if (!isFarther(pp[0], pp[1], z)) return;
+	float z = 1 / pp[2];
+	if (isFarther(pp[0], pp[1], z)) return;
 	setZB(pp[0], pp[1], z);
 	rasterizeCircle(pp, r, c.getColor());
 }

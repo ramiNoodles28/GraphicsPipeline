@@ -24,6 +24,12 @@ void GUI::cb_PathCam(Fl_Button* o, void* v) {
 }
 
 //////////
+void GUI::cb_LightControl_i(Fl_Button*, void*) {
+    LightControl_cb();
+}
+void GUI::cb_LightControl(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_LightControl_i(o, v);
+}
 void GUI::cb_SM1_i(Fl_Button*, void*) {
     SM1_cb();
 }
@@ -41,6 +47,12 @@ void GUI::cb_SM3_i(Fl_Button*, void*) {
 }
 void GUI::cb_SM3(Fl_Button* o, void* v) {
     ((GUI*)(o->parent()->user_data()))->cb_SM3_i(o, v);
+}
+void GUI::cb_SM23_i(Fl_Button*, void*) {
+    SM23_cb();
+}
+void GUI::cb_SM23(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_SM23_i(o, v);
 }
 void GUI::cb_LightType_i(Fl_Button*, void*) {
     LightType_cb();
@@ -62,6 +74,9 @@ GUI::GUI() {
     { Fl_Button* o = new Fl_Button(p, (p + h) + p, w, h, "Free Cam");
       o->callback((Fl_Callback*)cb_FreeCam);
     } // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, w, h, "Light Control");
+  	  o->callback((Fl_Callback*)cb_LightControl);
+    }
     /*{ Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, w, h, "Path Cam");
   	  o->callback((Fl_Callback*)cb_PathCam);
     } // Fl_Return_Button* o */
@@ -74,6 +89,9 @@ GUI::GUI() {
     } // Fl_Return_Button* o
     { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM3: Per Pixel");
       o->callback((Fl_Callback*)cb_SM3);
+    } // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM2 & SM3");
+  	  o->callback((Fl_Callback*)cb_SM23);
     } // Fl_Return_Button* o
     { Fl_Button* o = new Fl_Button(2 * p + w, 3 * (p + h) + p, 2 * w, h, "Cycle Light Type");
   	  o->callback((Fl_Callback*)cb_LightType);
@@ -103,6 +121,9 @@ void GUI::PathCam_cb() {
     scene->PathCam();
 }
 
+void GUI::LightControl_cb() {
+    scene->LightControl();
+}
 void GUI::SM1_cb() {
     scene->SM1();
 }
@@ -111,6 +132,9 @@ void GUI::SM2_cb() {
 }
 void GUI::SM3_cb() {
     scene->SM3();
+}
+void GUI::SM23_cb() {
+    scene->SM23();
 }
 void GUI::LightType_cb() {
     scene->LightType();

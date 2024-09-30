@@ -15,6 +15,8 @@ public:
 	int w, h; // width and height of frame
 	float* zb; // z buffer
 	int s; // scale of camera movement
+	int lightType;
+	V3 lv, lp;
 	PPC *cam;
 	FrameBuffer(int u0, int v0, int _w, int _h);
 	void addCam(PPC* c);
@@ -31,7 +33,7 @@ public:
 	void rasterizeCircle(V3 center, float radius, unsigned int color);
 	void rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color);
 	void rasterizeTris(V3 p0, V3 p1, V3 p2, unsigned int color);
-	void rasterizeTris(V3 a, V3 b, V3 c, V3 c0, V3 c1, V3 c2); // unlit vector interpolated raster
+	void rasterizeTris(V3 a, V3 b, V3 c, M33 colors); // unlit vector interpolated raster
 	void rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka); // directionally lit per pixel raster
 	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, V3 lp, float ka);  // point lit per pixel raster
 	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
