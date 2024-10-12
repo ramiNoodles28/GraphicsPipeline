@@ -6,39 +6,43 @@ using namespace std;
 #include <fstream>
 #include <strstream>
 
-
-
 void TM::allocateMemory() {
-
 	verts = new V3[vertsN];
 	colors = new V3[vertsN];
 	bakedColors = new V3[vertsN];
 	normals = new V3[vertsN];
 	tris = new unsigned int[3*trisN];
-
 }
 
 void TM::setRectangle(float rw, float rh) {
-
 	vertsN = 4;
 	trisN = 2;
 	allocateMemory();
-
 	verts[0] = V3(-rw / 2.0f, +rh / 2.0f, 0.0f);
 	verts[1] = V3(-rw / 2.0f, -rh / 2.0f, 0.0f);
 	verts[2] = V3(+rw / 2.0f, -rh / 2.0f, 0.0f);
 	verts[3] = V3(+rw / 2.0f, +rh / 2.0f, 0.0f);
-
 	int tri = 0;
-	tris[tri * 3 + 0] = 0;
-	tris[tri * 3 + 1] = 1;
-	tris[tri * 3 + 2] = 2;
-	tri++;
-	tris[tri * 3 + 0] = 2;
-	tris[tri * 3 + 1] = 3;
-	tris[tri * 3 + 2] = 0;
-	tri++;
+	tris[tri * 3 + 0] = 0; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 2; tri++;
+	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0; tri++;
+}
 
+void TM::setGroundPlane(V3 center, V3 color, float s) {
+	vertsN = 4;
+	trisN = 2;
+	allocateMemory();
+	verts[0] = center + V3(s/2.0f, 0, s / 2.0f);
+	verts[1] = center + V3(s / 2.0f, 0, s / -2.0f);
+	verts[2] = center + V3(s / -2.0f, 0, s / -2.0f);
+	verts[3] = center + V3(s / -2.0f, 0, s / 2.0f);
+	int tri = 0;
+	tris[tri * 3 + 0] = 0; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 2; tri++;
+	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0; tri++;
+	for (int i = 0; i < 4; i++) {
+		normals[i] = V3(0, 1, 0);
+		colors[i] = color;
+		bakedColors[i] = color;
+	}
 }
 
 TM TM::boundingbox() {
@@ -66,26 +70,25 @@ TM TM::boundingbox() {
 
 	int tri = 0;
 	// top face
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 5; tri++;
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 1; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 3; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 5; tri++;
 	// front face
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 1; tri++;
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 5; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 6; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 1; tri++;
 	// right face
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 1; box.tris[tri * 3 + 2] = 6; tri++;
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 2; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 1; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 6; tri++;
 	// back face
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 4; tri++;
-	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 3; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 2; tri++;
+	box.tris[tri * 3] = 0; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 4; tri++;
 	// left face
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 5; box.tris[tri * 3 + 2] = 3; tri++;
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 4; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 3; box.tris[tri * 3 + 2] = 5; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 3; tri++;
 	// bottom face
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 4; box.tris[tri * 3 + 2] = 2; tri++;
-	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 6; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 2; box.tris[tri * 3 + 2] = 4; tri++;
+	box.tris[tri * 3] = 7; box.tris[tri * 3 + 1] = 6; box.tris[tri * 3 + 2] = 2; tri++;
 	return box;
 }
-
 
 void TM::translate(V3 tv) {
 
@@ -162,12 +165,12 @@ void TM::renderTrisDirLight(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
 	}
 } // render mesh with directional light
 
-void TM::renderTrisPointLight(FrameBuffer* fb, PPC* ppc, V3 lp, float ka) {
+void TM::renderTrisPointLight(FrameBuffer* fb, PPC* ppc, PointLight pl) {
 	if (!onFlag)
 		return;
 	// go over all triangles
 	V3 plp;
-	ppc->project(lp, plp);
+	ppc->project(pl.lp, plp);
 	for (int tri = 0; tri < trisN; tri++) {
 		V3 tvs[3];
 		V3 pvs[3];
@@ -180,7 +183,7 @@ void TM::renderTrisPointLight(FrameBuffer* fb, PPC* ppc, V3 lp, float ka) {
 		fb->rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
 			M33(tvs[0], tvs[1], tvs[2]),
 			M33(colors[vinds[0]], colors[vinds[1]], colors[vinds[2]]),
-			M33(normals[vinds[0]], normals[vinds[1]], normals[vinds[2]]), lp, ka);
+			M33(normals[vinds[0]], normals[vinds[1]], normals[vinds[2]]), pl);
 	}
 } // render mesh with point light
 
@@ -248,7 +251,6 @@ void TM::loadBin(char *fname) {
 	cerr << "      xyz " << ((colors) ? "rgb " : "") << ((normals) ? "nxnynz " : "") << ((tcs) ? "tcstct " : "") << endl;
 }
 
-
 void TM::scaleInPlace(float scf) {
 	V3 oldCenter = centroid();
 	translate(oldCenter * -1.0f);
@@ -262,13 +264,11 @@ void TM::rotate(V3 aO, V3 aD, float theta) {
 		verts[vi] = verts[vi].rotateAboutAxis(aO, aD, theta);
 }
 
-
 void TM::resetAllColors() {
 	for (int i = 0; i < vertsN; i++) {
 		colors[i] = bakedColors[i];
 	}
 }
-
 
 void TM::setAllColors(V3 c) {
 	if (!colors)

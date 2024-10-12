@@ -1,8 +1,9 @@
 #pragma once
 
 #include "V3.h"
-#include "framebuffer.h"
 #include "PPC.h"
+#include "pointlight.h"
+#include "framebuffer.h"
 
 class TM{
 public:
@@ -11,8 +12,10 @@ public:
 	int vertsN;
 	unsigned int *tris;
 	int trisN;
+
 	TM(): onFlag(1), verts(0), vertsN(0), tris(0), trisN(0), colors(0), bakedColors(0), normals(0) {}; // default constructor
 	void setRectangle(float rw, float rh); // makes a basic rectangle mesh
+	void setGroundPlane(V3 center, V3 color, float s); // makes a ground plane
 	void allocateMemory(); // allocates memory for new meshes
 	void loadBin(char *fname); // loads mesh from binary file
 	//void setCylinder(float rad, float height, float radDivs);
@@ -26,7 +29,7 @@ public:
 	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
 	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
 	void renderTrisDirLight(FrameBuffer* fb, PPC* ppc, V3 lv, float ka); // render mesh with directional light
-	void renderTrisPointLight(FrameBuffer* fb, PPC* ppc, V3 lp, float ka); // render mesh with point light
+	void renderTrisPointLight(FrameBuffer* fb, PPC* ppc, PointLight pl); // render mesh with point light
 
 	void resetAllColors(); // resets vert colors to original baked values
 	void setAllColors(V3 c); // sets all vertex colors to one color 

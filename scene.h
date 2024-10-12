@@ -6,6 +6,7 @@
 #include "framebuffer.h"
 #include "PPC.h"
 #include "TM.h"
+#include "pointlight.h"
 
 class Scene {
 public:
@@ -21,6 +22,7 @@ public:
 	float ka;
 	float kd;
 	V3 lv, lp, lp1;
+	PointLight* pLight; // point light objects
 
 	Scene();
 	void DBG();

@@ -90,10 +90,10 @@ GUI::GUI() {
     { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM3: Per Pixel");
       o->callback((Fl_Callback*)cb_SM3);
     } // Fl_Return_Button* o
-    { Fl_Button* o = new Fl_Button(2 * p + w, 2 * (p + h) + p, 2 * w, h, "SM2 & SM3");
+    { Fl_Button* o = new Fl_Button(2 * p + w, 3 * (p + h) + p, 2 * w, h, "SM2 & SM3");
   	  o->callback((Fl_Callback*)cb_SM23);
     } // Fl_Return_Button* o
-    { Fl_Button* o = new Fl_Button(2 * p + w, 3 * (p + h) + p, 2 * w, h, "Cycle Light Type");
+    { Fl_Button* o = new Fl_Button(2 * p + w, 4 * (p + h) + p, 2 * w, h, "Cycle Light Type");
   	  o->callback((Fl_Callback*)cb_LightType);
     } // Fl_Return_Button* o
     uiw->end();

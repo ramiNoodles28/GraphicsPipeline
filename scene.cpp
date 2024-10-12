@@ -32,8 +32,11 @@ Scene::Scene() {
 	gui->show();
 	gui->uiw->position(u0, v0 + fb->h + v0);
 
-	tmsN = 2;
+	tmsN = 3;
 	tms = new TM[tmsN];
+
+	int lNum = 1;
+	pLight = new PointLight[lNum];
 
 	lightingMode = 0;
 	lightType = 0;
@@ -45,14 +48,15 @@ Scene::Scene() {
 }
 
 void Scene::Render() {
-	if (!fb)
-		return;
+	if (!fb) return;
 	fb->set(0xFFFFFFFF);
+
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		//tms[tmi].renderWF(fb, ppc);
 		switch (lightType % 2) {
 		case 0: // point light
+			pLight[0] = PointLight(lp, ka, kd, 512);
 			fb->renderPoint(lp, 3.5, V3(0, 0, 0), ppc);
 			fb->renderPoint(lp1, 3.5, V3(0, 0, 0), ppc);
 			switch (lightingMode) {
@@ -61,10 +65,10 @@ void Scene::Render() {
 				tms[tmi].renderTris(fb, ppc);
 				break;
 			case 2:
-				tms[tmi].renderTrisPointLight(fb, ppc, lp, ka);
+				tms[tmi].renderTrisPointLight(fb, ppc, pLight[0]);
 				break;
 			case 3:
-				if (tmi == 0) tms[tmi].renderTrisPointLight(fb, ppc, lp, ka);
+				if (tmi == 0) tms[tmi].renderTrisPointLight(fb, ppc, pLight[0]);
 				else {
 					tms[tmi].lightMeshPointRGB(lp1, ka);
 					tms[tmi].renderTris(fb, ppc);
@@ -112,6 +116,7 @@ void Scene::FreeCam() {
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	tms[1].loadBin("geometry/teapot1k.bin");
 	tms[1].translate(V3(-150, 0.0f, -150.0f) - tms[1].centroid());
+	tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.7f, 0.7f, 0.7f), 100.0f);
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
@@ -126,7 +131,7 @@ void Scene::FreeCam() {
 		Render();
 		fb->redraw();
 		Fl::check();
-		t += 0.1;
+		t += 0.1f;
 	}
 }
 void Scene::LightControl() {

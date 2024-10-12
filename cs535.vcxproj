@@ -80,8 +80,10 @@
     <ClInclude Include="framebuffer.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="M33.h" />
+    <ClInclude Include="pointlight.h" />
     <ClInclude Include="PPC.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="shaders.h" />
     <ClInclude Include="TM.h" />
     <ClInclude Include="V3.h" />
   </ItemGroup>
@@ -90,8 +92,10 @@
     <ClCompile Include="framebuffer.cpp" />
     <ClCompile Include="gui.cxx" />
     <ClCompile Include="M33.cpp" />
+    <ClCompile Include="pointlight.cpp" />
     <ClCompile Include="PPC.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="shaders.cpp" />
     <ClCompile Include="TM.cpp" />
     <ClCompile Include="V3.cpp" />
   </ItemGroup>

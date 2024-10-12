@@ -6,8 +6,9 @@
 
 #include "V3.h"
 #include "M33.h"
+#include "pointlight.h"
 
-class PPC;
+//class PPC;
 
 class FrameBuffer : public Fl_Gl_Window {
 public:
@@ -18,6 +19,7 @@ public:
 	int lightType;
 	V3 lv, lp;
 	PPC *cam;
+
 	FrameBuffer(int u0, int v0, int _w, int _h);
 	void addCam(PPC* c);
 	void draw();
@@ -28,6 +30,7 @@ public:
 	void set(unsigned int bgr);
 	void set(int u, int v, unsigned int col);
 	void setGuarded(int u, int v, unsigned int col);
+
 	void rasterizeRectangle(int u0, int v0, int l, int h, unsigned int col);
 	int clipRectangle(int& u0, int& v0, int& rw, int& rh);
 	void rasterizeCircle(V3 center, float radius, unsigned int color);
@@ -35,8 +38,12 @@ public:
 	void rasterizeTris(V3 p0, V3 p1, V3 p2, unsigned int color);
 	void rasterizeTris(V3 a, V3 b, V3 c, M33 colors); // unlit vector interpolated raster
 	void rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka); // directionally lit per pixel raster
-	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, V3 lp, float ka);  // point lit per pixel raster
+	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl);  // point lit per pixel raster
+
+	V3 triMins(V3 a, V3 b, V3 c); // gets tri min bounds
+	V3 triMaxes(V3 a, V3 b, V3 c); // gets tri max bounds
 	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
+	V3 edgeFunctions(V3 a, V3 b, V3 c, V3 p); // returns if point is on right side of edge for multiple edges
 	int isCCW(V3 a, V3 b, V3 c);
 	int inBounds(V3 p);
 
@@ -46,7 +53,8 @@ public:
 	void renderPoint(V3 p, float r, V3 c, PPC* ppc);
 
 	void clearZB(); // clear the z buffer
-	int isFarther(int u, int v, float z); // check to override current pixel z buffer
+	int isFarther(int u, int v, float z); // check if current pixel z is farther than z buffer
+	int isCloser(int u, int v, float z); // check and set if current pixel z is closer than z buffer
 	void setZB(int u, int v, float z); // set z buffer at pixel coordinate
 	float getZB(int u, int v); // get z buffer from pixel coordinate
 };

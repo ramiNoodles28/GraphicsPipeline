@@ -87,7 +87,7 @@ void PPC::interpCam(PPC start, PPC end, float t) {
 	C = start.C + (end.C - start.C) * t;
 } // interpolate camera between start and end camera linearly
 
-
+/*
 void PPC::renderWF(FrameBuffer *fb, float visf, PPC *visppc) {
 	float scf = visf / getFocalLength();
 	V3 bv(0.0f, 0.0f, 0.0f);
@@ -111,7 +111,7 @@ void PPC::renderWF(FrameBuffer *fb, float visf, PPC *visppc) {
 		C + c*scf,
 		bv, bv, visppc);
 } // render wireframe of camera
-
+*/
 
 V3 PPC::getViewDirection() {
 	return (a ^ b).normalize();
@@ -120,8 +120,6 @@ V3 PPC::getViewDirection() {
 float PPC::getFocalLength() {
 	return c * getViewDirection();
 }
-
-
 
 void PPC::loadFromTxt(char *fname) {
 	ifstream ifs(fname);

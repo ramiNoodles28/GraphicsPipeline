@@ -2,7 +2,7 @@
 
 #include <ostream>
 #include <istream>
-#include "framebuffer.h"
+//#include "framebuffer.h"
 using namespace std;
 #include "V3.h"
 
@@ -10,7 +10,7 @@ class PPC {
 public:
 	V3 a, b, c, C; // a and b describe image plane, C is point where eye is, c vector from C to top corner of img plane
 	int w, h; // width and height (in pixels) of image frame
-	PPC() {};
+	PPC() {}
 	PPC(float hfov, int w, int h); // Constructor from field of view, and w/h of image frame
 
 	int project(V3 P, V3& Q); // project point onto image plane
@@ -25,7 +25,7 @@ public:
 
 	V3 getViewDirection(); // get view direction vector
 	float getFocalLength(); // get focal length
-	void renderWF(FrameBuffer *fb, float visf, PPC *visppc); // render wireframe of camera
+	//void renderWF(FrameBuffer *fb, float visf, PPC *visppc); // render wireframe of camera THIS CAUSES PROBLEMS
 	void saveToTxt(char* fname); // save camera parameters to txt file
 	void loadFromTxt(char* fname); // load in camera parameters from txt file
 	friend istream& operator>>(istream& istr, PPC& p); // Stream input

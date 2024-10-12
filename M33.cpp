@@ -64,7 +64,7 @@ V3 M33::operator^(V3 v) {
     M33& m = *this;
     ret = (m[0] * v[0]) + (m[1] * v[1]) + (m[2] * v[2]);
     return ret;
-} // Multiply each matrix row by vector element then add
+} // Scale each matrix row by vector element then add scaled vectors together
 
 float M33::determinant() {
     return rows[0] * (rows[1] ^ rows[2]);

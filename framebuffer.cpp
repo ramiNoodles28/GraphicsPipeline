@@ -2,7 +2,7 @@
 #include "framebuffer.h"
 #include "math.h"
 #include <iostream>
-#include "scene.h"
+//#include "scene.h"
 
 #include <tiffio.h>
 
@@ -246,7 +246,7 @@ int FrameBuffer::clipRectangle(int& u0, int& v0, int& rw, int& rh) {
 		rh = h - v0;
 	}
 	return 1;
-} // return 0 if entire rectangle is off screen
+} // return 0 if entire rectangle is off-screen
 
 void FrameBuffer::rasterizeCircle(V3 center, float radius, unsigned int color) {
 	int u0, v0, rw, rh;
@@ -268,8 +268,6 @@ void FrameBuffer::rasterizeCircle(V3 center, float radius, unsigned int color) {
 	}
 }
 
-
-// p = p0 + (p1-p0)*t
 void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
   // find the largest span (horizontal or vertical)
 	float hspan = fabsf(p0[0] - p1[0]);
@@ -305,25 +303,17 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color) {
 
 void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 	V3 p(0, 0);
-	V3 mins(floor(min(a[0], min(b[0], c[0]))),
-			floor(min(a[1], min(b[1], c[1]))));
-	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
-			 ceil(max(a[1], max(b[1], c[1]))));
+	V3 mins = triMins(a, b, c);
+	V3 maxes = triMaxes(a, b, c);
 	float triArea = edgeFunction(a, b, c);
 	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
 		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
 			if (!inBounds(p)) continue;
-			float e0 = edgeFunction(a, b, p);
-			float e1 = edgeFunction(b, c, p);
-			float e2 = edgeFunction(c, a, p);
-			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
-				float w0 = e1 / triArea;
-				float w1 = e2 / triArea;
-				float w2 = e0 / triArea;
-				V3 w = V3(w0, w1, w2);
-				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
-				if (isFarther(p[0], p[1], depth)) continue;
-				setZB(p[0], p[1], depth);
+			V3 efs = edgeFunctions(a, b, c, p);
+			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
+				V3 w = efs / triArea;
+				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
+				if (!isCloser(p[0], p[1], depth)) continue;
 				V3 color = colors ^ w;
 				setGuarded(p[0], p[1], color.getColor());
 			}
@@ -333,25 +323,17 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 
 void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka) {
 	V3 p(0, 0);
-	V3 mins(floor(min(a[0], min(b[0], c[0]))),
-		floor(min(a[1], min(b[1], c[1]))));
-	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
-		ceil(max(a[1], max(b[1], c[1]))));
+	V3 mins = triMins(a, b, c);
+	V3 maxes = triMaxes(a, b, c);
 	float triArea = edgeFunction(a, b, c);
 	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
 		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
 			if (!inBounds(p)) continue;
-			float e0 = edgeFunction(a, b, p);
-			float e1 = edgeFunction(b, c, p);
-			float e2 = edgeFunction(c, a, p);
-			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
-				float w0 = e1 / triArea;
-				float w1 = e2 / triArea;
-				float w2 = e0 / triArea;
-				V3 w(w0, w1, w2);
-				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
-				if (isFarther(p[0], p[1], depth)) continue;
-				setZB(p[0], p[1], depth);
+			V3 efs = edgeFunctions(a, b, c, p);
+			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
+				V3 w = efs / triArea;
+				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
+				if (!isCloser(p[0], p[1], depth)) continue;
 				V3 pixelNormal = (norms ^ w).normalize();
 				V3 baseColor = (color ^ w);
 				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
@@ -361,45 +343,55 @@ void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, 
 	}
 }
 
-void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, V3 lp, float ka) {
+void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl) {
 	V3 p(0, 0);
-	V3 mins(floor(min(a[0], min(b[0], c[0]))),
-			floor(min(a[1], min(b[1], c[1]))));
-	V3 maxes(ceil(max(a[0], max(b[0], c[0]))),
-			 ceil(max(a[1], max(b[1], c[1]))));
+	V3 mins = triMins(a, b, c);
+	V3 maxes = triMaxes(a, b, c);
 	float triArea = edgeFunction(a, b, c);
 	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
 		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
 			if (!inBounds(p)) continue;
-			float e0 = edgeFunction(a, b, p);
-			float e1 = edgeFunction(b, c, p);
-			float e2 = edgeFunction(c, a, p);
-			if (e0 >= 0 && e1 >= 0 && e2 >= 0) {
-				float w0 = e1 / triArea;
-				float w1 = e2 / triArea;
-				float w2 = e0 / triArea;
-				V3 w(w0, w1, w2);
-				float depth = 1.0f / (w0 * a[2] + w1 * b[2] + w2 * c[2]);
-				if (isFarther(p[0], p[1], depth)) continue;
-				setZB(p[0], p[1], depth);
+			V3 efs = edgeFunctions(a, b, c, p);
+			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
+				V3 w = efs / triArea;
+				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
+				if (!isCloser(p[0], p[1], depth)) continue;
 				V3 pixelNormal = (norms ^ w).normalize();
 				V3 baseColor = (color ^ w);
 				V3 pixelPos = (verts ^ w);
-				V3 lv = (lp - pixelPos).normalize();
-				float dist = (lp - pixelPos).length();
+				V3 lv = (pl.lp - pixelPos).normalize();
+				float dist = (pl.lp - pixelPos).length();
 				float atten = 1.0 / (0.005 * dist * dist);
 				float diffuse = max(0.0f, pixelNormal * lv);
-				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
-				pixelColor = baseColor * diffuse * atten + (baseColor * ka);
+				V3 pixelColor = baseColor.lightColor(lv, pl.ka, pixelNormal);
+				pixelColor = baseColor * diffuse * atten + (baseColor * pl.ka);
 				setGuarded(p[0], p[1], pixelColor.getColor());
 			}
 		}
 	}
+}
+
+V3 FrameBuffer::triMins(V3 a, V3 b, V3 c) {
+	return V3(floor(min(a[0], min(b[0], c[0]))),
+		floor(min(a[1], min(b[1], c[1]))));
+}
+
+V3 FrameBuffer::triMaxes(V3 a, V3 b, V3 c) {
+	return V3(ceil(max(a[0], max(b[0], c[0]))),
+		ceil(max(a[1], max(b[1], c[1]))));
 }
 
 float FrameBuffer::edgeFunction(V3 a, V3 b, V3 p) {
 	return p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
 } // returns if point is on right side of edge
+
+V3 FrameBuffer::edgeFunctions(V3 a, V3 b, V3 c, V3 p) {
+	V3 efs;
+	efs[2] = p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
+	efs[0] = p[0] * (c[1] - b[1]) - p[1] * (c[0] - b[0]) - (b[0] * c[1]) + (b[1] * c[0]);
+	efs[1] = p[0] * (a[1] - c[1]) - p[1] * (a[0] - c[0]) - (c[0] * a[1]) + (c[1] * a[0]);
+	return efs;
+} // returns if point is on right side of edge for multiple edges
 
 int FrameBuffer::isCCW(V3 a, V3 b, V3 c) {
 	return ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0;
@@ -408,7 +400,6 @@ int FrameBuffer::isCCW(V3 a, V3 b, V3 c) {
 int FrameBuffer::inBounds(V3 p) {
 	return !(p[0] < 0 || p[0] > w - 1 || p[1] < 0 || p[1] > h - 1);
 }
-
 
 void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, unsigned int color) {
 	V3 c;
@@ -441,17 +432,23 @@ void FrameBuffer::clearZB() {
 		zb[uv] = 0.0f;
 } // clear the z buffer
 
-
 int FrameBuffer::isFarther(int u, int v, float z) {
 	if (getZB(u, v) > z)
 		return 1;
 	return 0;
-} // check to override current pixel z buffer
+} // check if current pixel z is farther than z buffer
+
+int FrameBuffer::isCloser(int u, int v, float z) {
+	if (getZB(u, v) < z) {
+		setZB(u, v, z);
+		return 1;
+	}
+	return 0;
+} // check and set if current pixel z is closer than z buffer
 
 float FrameBuffer::getZB(int u, int v) {
 	return zb[(h - 1 - v) * w + u];
 } // get z buffer from pixel coordinate
-
 
 void FrameBuffer::setZB(int u, int v, float z) {
 	zb[(h - 1 - v) * w + u] = z;

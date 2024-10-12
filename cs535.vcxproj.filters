@@ -9,6 +9,8 @@
     <ClCompile Include="PPC.cpp" />
     <ClCompile Include="TM.cpp" />
     <ClCompile Include="easing.cpp" />
+    <ClCompile Include="shaders.cpp" />
+    <ClCompile Include="pointlight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framebuffer.h" />
@@ -19,5 +21,7 @@
     <ClInclude Include="PPC.h" />
     <ClInclude Include="TM.h" />
     <ClInclude Include="easing.h" />
+    <ClInclude Include="shaders.h" />
+    <ClInclude Include="pointlight.h" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ public:
     M33 operator*(float s); // Matrix times a scalar
     V3 operator*(V3 v); // Matrix times col vector
     M33 operator*(M33 m); // Matrix multiplication
-    V3 operator^(V3 v); // Multiply each matrix row by vector element then add
+    V3 operator^(V3 v); // Scale each matrix row by vector element then add scaled vectors together
     float determinant(); // Get matrix determinant
     M33 transpose(); // Transpose matrix
     M33 invert(); // Invert matrix
