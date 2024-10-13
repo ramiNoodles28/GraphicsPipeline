@@ -268,6 +268,27 @@ void FrameBuffer::rasterizeCircle(V3 center, float radius, unsigned int color) {
 	}
 }
 
+void FrameBuffer::renderWF(TM tm, PPC* ppc) {
+	if (!tm.onFlag)
+		return;
+
+	// go over all triangles
+	for (int tri = 0; tri < tm.trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tm.tris[3 * tri + vi];
+			tvs[vi] = tm.verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		for (int ei = 0; ei < 3; ei++) {
+			rasterize2DSegment(pvs[ei], pvs[(ei + 1) % 3], 
+				tm.colors[vinds[ei]], tm.colors[vinds[(ei + 1) % 3]]);
+		}
+	}
+} // renders wireframe of mesh
+
 void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
   // find the largest span (horizontal or vertical)
 	float hspan = fabsf(p0[0] - p1[0]);
@@ -301,6 +322,24 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color) {
 	rasterizeTris(a, b, c, M33(cl, cl, cl));
 }
 
+void FrameBuffer::renderTris(TM tm, PPC* ppc) {
+	if (!tm.onFlag)
+		return;
+	// go over all triangles
+	for (int tri = 0; tri < tm.trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tm.tris[3 * tri + vi];
+			tvs[vi] = tm.verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		rasterizeTris(pvs[0], pvs[1], pvs[2],
+			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]));
+	}
+} // renders filled in tri mesh
+
 void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
@@ -320,6 +359,25 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 		}
 	}
 }
+
+void FrameBuffer::renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka) {
+	if (!tm.onFlag)
+		return;
+	// go over all triangles
+	for (int tri = 0; tri < tm.trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tm.tris[3 * tri + vi];
+			tvs[vi] = tm.verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		rasterizeTrisDirLight(pvs[0], pvs[1], pvs[2],
+			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
+			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), lv, ka);
+	}
+} // render mesh with directional light
 
 void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka) {
 	V3 p(0, 0);
@@ -343,6 +401,28 @@ void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, 
 	}
 }
 
+void FrameBuffer::renderTrisPointLight(TM tm, PPC* ppc, PointLight pl) {
+	if (!tm.onFlag)
+		return;
+	// go over all triangles
+	V3 plp;
+	ppc->project(pl.lp, plp);
+	for (int tri = 0; tri < tm.trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tm.tris[3 * tri + vi];
+			tvs[vi] = tm.verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
+			M33(tvs[0], tvs[1], tvs[2]),
+			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
+			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), pl);
+	}
+} // render mesh with point light
+
 void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
@@ -361,7 +441,7 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color
 				V3 pixelPos = (verts ^ w);
 				V3 lv = (pl.lp - pixelPos).normalize();
 				float dist = (pl.lp - pixelPos).length();
-				float atten = 1.0 / (0.005 * dist * dist);
+				float atten = 1.0; /// (0.005 * dist * dist);
 				float diffuse = max(0.0f, pixelNormal * lv);
 				V3 pixelColor = baseColor.lightColor(lv, pl.ka, pixelNormal);
 				pixelColor = baseColor * diffuse * atten + (baseColor * pl.ka);

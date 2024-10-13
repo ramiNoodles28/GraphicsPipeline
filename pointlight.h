@@ -2,6 +2,7 @@
 
 #include "PPC.h"
 #include "V3.h"
+#include "TM.h"
 
 class PointLight {
 public:
@@ -13,4 +14,6 @@ public:
 	PointLight() {};
 	PointLight(V3 lp, float ka, float kd, float res);
 
+	int selectCam(V3 p); // figures out which camera a given point should be projected to 
+	void setShadowMaps(TM *tms); // set up z buffers for cameras to determine what pixels are in shadow
 };

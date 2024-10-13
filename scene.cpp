@@ -50,31 +50,35 @@ Scene::Scene() {
 void Scene::Render() {
 	if (!fb) return;
 	fb->set(0xFFFFFFFF);
-
+	pLight[0] = PointLight(lp, ka, kd, 512);
+	pLight[0].setShadowMaps(tms);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		//tms[tmi].renderWF(fb, ppc);
+		
+		
+		
 		switch (lightType % 2) {
 		case 0: // point light
-			pLight[0] = PointLight(lp, ka, kd, 512);
+			
 			fb->renderPoint(lp, 3.5, V3(0, 0, 0), ppc);
 			fb->renderPoint(lp1, 3.5, V3(0, 0, 0), ppc);
 			switch (lightingMode) {
 			case 1:
 				tms[tmi].lightMeshPointRGB(lp, ka);
-				tms[tmi].renderTris(fb, ppc);
+				fb->renderTris(tms[tmi], ppc);
 				break;
 			case 2:
-				tms[tmi].renderTrisPointLight(fb, ppc, pLight[0]);
+				fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
 				break;
 			case 3:
-				if (tmi == 0) tms[tmi].renderTrisPointLight(fb, ppc, pLight[0]);
+				if (tmi == 0) fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
 				else {
 					tms[tmi].lightMeshPointRGB(lp1, ka);
-					tms[tmi].renderTris(fb, ppc);
+					fb->renderTris(tms[tmi], ppc);
 				} break;
 			default:
-				tms[tmi].renderTris(fb, ppc);
+				fb->renderTris(tms[tmi], ppc);
 				break;
 			}
 			break;
@@ -82,17 +86,18 @@ void Scene::Render() {
 			switch (lightingMode) {
 			case 1:
 				tms[tmi].lightMeshDirRGB(lv, ka);
-				tms[tmi].renderTris(fb, ppc);
+				fb->renderTris(tms[tmi], ppc);
 				break;
 			case 2:
-				tms[tmi].renderTrisDirLight(fb, ppc, lv, ka);
+				fb->renderTrisDirLight(tms[tmi], ppc, lv, ka);
 				break;
 			default:
-				tms[tmi].renderTris(fb, ppc);
+				fb->renderTris(tms[tmi], ppc);
 				break;
 			}
 			break;
 		}
+		
 	}
 	fb->clearZB();
 	fb->redraw();

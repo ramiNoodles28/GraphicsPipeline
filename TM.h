@@ -1,9 +1,6 @@
 #pragma once
 
 #include "V3.h"
-#include "PPC.h"
-#include "pointlight.h"
-#include "framebuffer.h"
 
 class TM{
 public:
@@ -26,10 +23,6 @@ public:
 	void scaleInPlace(float scf); // scales mesh by scalar factor
 	void rotate(V3 aO, V3 aD, float theta); // rotate mesh around given axis by theta degrees
 	TM boundingbox(); // creates a new bounding box mesh from given mesh
-	void renderWF(FrameBuffer *fb, PPC *ppc); // renders wireframe of mesh
-	void renderTris(FrameBuffer* fb, PPC* ppc); // renders filled in tri mesh
-	void renderTrisDirLight(FrameBuffer* fb, PPC* ppc, V3 lv, float ka); // render mesh with directional light
-	void renderTrisPointLight(FrameBuffer* fb, PPC* ppc, PointLight pl); // render mesh with point light
 
 	void resetAllColors(); // resets vert colors to original baked values
 	void setAllColors(V3 c); // sets all vertex colors to one color 

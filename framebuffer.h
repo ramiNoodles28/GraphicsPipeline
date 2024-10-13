@@ -7,7 +7,7 @@
 #include "V3.h"
 #include "M33.h"
 #include "pointlight.h"
-
+#include "TM.h"
 //class PPC;
 
 class FrameBuffer : public Fl_Gl_Window {
@@ -39,6 +39,11 @@ public:
 	void rasterizeTris(V3 a, V3 b, V3 c, M33 colors); // unlit vector interpolated raster
 	void rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka); // directionally lit per pixel raster
 	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl);  // point lit per pixel raster
+
+	void renderWF(TM tm, PPC* ppc); // renders wireframe of mesh
+	void renderTris(TM tm, PPC* ppc); // renders filled in tri mesh
+	void renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka); // render mesh with directional light
+	void renderTrisPointLight(TM tm, PPC* ppc, PointLight pl); // render mesh with point light
 
 	V3 triMins(V3 a, V3 b, V3 c); // gets tri min bounds
 	V3 triMaxes(V3 a, V3 b, V3 c); // gets tri max bounds
