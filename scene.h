@@ -40,7 +40,6 @@ public:
 
 	void PathCam();
 	void RotatingPoints(); // Generate points rotated about an axis and save to file
-	void NameCycle(); // rasterize my name and have it translate across frame
 };
 
 extern Scene *scene;

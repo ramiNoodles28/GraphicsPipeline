@@ -284,12 +284,12 @@ void FrameBuffer::renderWF(TM tm, PPC* ppc) {
 		}
 		for (int ei = 0; ei < 3; ei++) {
 			rasterize2DSegment(pvs[ei], pvs[(ei + 1) % 3], 
-				tm.colors[vinds[ei]], tm.colors[vinds[(ei + 1) % 3]]);
+				tm.colors[vinds[ei]], tm.colors[vinds[(ei + 1) % 3]], ppc);
 		}
 	}
 } // renders wireframe of mesh
 
-void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
+void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC* ppc) {
   // find the largest span (horizontal or vertical)
 	float hspan = fabsf(p0[0] - p1[0]);
 	float vspan = fabsf(p0[1] - p1[1]);
@@ -304,22 +304,22 @@ void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
 		V3 cc = c0 + (c1 - c0)*t;
 		int u = (int)p[0];
 		int v = (int)p[1];
-		if (isFarther(u, v, p[2])) continue;
-		setZB(u, v, p[2]);
+		if (ppc->isFarther(u, v, p[2])) continue;
+		ppc->setZB(u, v, p[2]);
 		setGuarded(u, v, cc.getColor());
 	}
 }
 
-void FrameBuffer::rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color) {
-	rasterize2DSegment(p0, p1, color);
-	rasterize2DSegment(p1, p2, color);
-	rasterize2DSegment(p2, p0, color);
+void FrameBuffer::rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color, PPC* ppc) {
+	rasterize2DSegment(p0, p1, color, ppc);
+	rasterize2DSegment(p1, p2, color, ppc);
+	rasterize2DSegment(p2, p0, color, ppc);
 }
 
-void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color) {
+void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, unsigned int color, PPC* ppc) {
 	V3 cl(0, 0, 0);
 	cl.setFromColor(color);
-	rasterizeTris(a, b, c, M33(cl, cl, cl));
+	rasterizeTris(a, b, c, M33(cl, cl, cl), ppc);
 }
 
 void FrameBuffer::renderTris(TM tm, PPC* ppc) {
@@ -336,11 +336,11 @@ void FrameBuffer::renderTris(TM tm, PPC* ppc) {
 			ppc->project(tvs[vi], pvs[vi]);
 		}
 		rasterizeTris(pvs[0], pvs[1], pvs[2],
-			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]));
+			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]), ppc);
 	}
 } // renders filled in tri mesh
 
-void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
+void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors, PPC* ppc) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
 	V3 maxes = triMaxes(a, b, c);
@@ -352,7 +352,7 @@ void FrameBuffer::rasterizeTris(V3 a, V3 b, V3 c, M33 colors) {
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
 				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
-				if (!isCloser(p[0], p[1], depth)) continue;
+				if (!ppc->isCloser(p[0], p[1], depth)) continue;
 				V3 color = colors ^ w;
 				setGuarded(p[0], p[1], color.getColor());
 			}
@@ -375,11 +375,11 @@ void FrameBuffer::renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka) {
 		}
 		rasterizeTrisDirLight(pvs[0], pvs[1], pvs[2],
 			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
-			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), lv, ka);
+			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), lv, ka, ppc);
 	}
 } // render mesh with directional light
 
-void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka) {
+void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka, PPC* ppc) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
 	V3 maxes = triMaxes(a, b, c);
@@ -391,7 +391,7 @@ void FrameBuffer::rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, 
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
 				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
-				if (!isCloser(p[0], p[1], depth)) continue;
+				if (!ppc->isCloser(p[0], p[1], depth)) continue;
 				V3 pixelNormal = (norms ^ w).normalize();
 				V3 baseColor = (color ^ w);
 				V3 pixelColor = baseColor.lightColor(lv, ka, pixelNormal);
@@ -419,11 +419,12 @@ void FrameBuffer::renderTrisPointLight(TM tm, PPC* ppc, PointLight pl) {
 		rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
 			M33(tvs[0], tvs[1], tvs[2]),
 			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
-			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), pl);
+			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), pl, ppc);
 	}
 } // render mesh with point light
 
-void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl) {
+void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, 
+			M33 verts, M33 color, M33 norms, PointLight pl, PPC* ppc) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
 	V3 maxes = triMaxes(a, b, c);
@@ -435,7 +436,7 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
 				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
-				if (!isCloser(p[0], p[1], depth)) continue;
+				if (!ppc->isCloser(p[0], p[1], depth)) continue;
 				V3 pixelNormal = (norms ^ w).normalize();
 				V3 baseColor = (color ^ w);
 				V3 pixelPos = (verts ^ w);
@@ -481,10 +482,10 @@ int FrameBuffer::inBounds(V3 p) {
 	return !(p[0] < 0 || p[0] > w - 1 || p[1] < 0 || p[1] > h - 1);
 }
 
-void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, unsigned int color) {
+void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, unsigned int color, PPC* ppc) {
 	V3 c;
 	c.setFromColor(color);
-	rasterize2DSegment(p0, p1, c, c);
+	rasterize2DSegment(p0, p1, c, c, ppc);
 }
 
 void FrameBuffer::render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc) {
@@ -494,7 +495,7 @@ void FrameBuffer::render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc) {
 	V3 pp1;
 	if (!ppc->project(p1, pp1))
 		return;
-	rasterize2DSegment(pp0, pp1, c0, c1);
+	rasterize2DSegment(pp0, pp1, c0, c1, ppc);
 	return;
 }
 
@@ -502,35 +503,10 @@ void FrameBuffer::renderPoint(V3 p, float r, V3 c, PPC *ppc) {
 	V3 pp;
 	if (!ppc->project(p, pp) || !inBounds(pp)) return;
 	float z = 1 / pp[2];
-	if (isFarther(pp[0], pp[1], z)) return;
-	setZB(pp[0], pp[1], z);
+	if (ppc->isFarther(pp[0], pp[1], z)) return;
+	ppc->setZB(pp[0], pp[1], z);
 	rasterizeCircle(pp, r, c.getColor());
 }
 
-void FrameBuffer::clearZB() {
-	for (int uv = 0; uv < w * h; uv++)
-		zb[uv] = 0.0f;
-} // clear the z buffer
 
-int FrameBuffer::isFarther(int u, int v, float z) {
-	if (getZB(u, v) > z)
-		return 1;
-	return 0;
-} // check if current pixel z is farther than z buffer
-
-int FrameBuffer::isCloser(int u, int v, float z) {
-	if (getZB(u, v) < z) {
-		setZB(u, v, z);
-		return 1;
-	}
-	return 0;
-} // check and set if current pixel z is closer than z buffer
-
-float FrameBuffer::getZB(int u, int v) {
-	return zb[(h - 1 - v) * w + u];
-} // get z buffer from pixel coordinate
-
-void FrameBuffer::setZB(int u, int v, float z) {
-	zb[(h - 1 - v) * w + u] = z;
-} // set z buffer at pixel coordinate
 

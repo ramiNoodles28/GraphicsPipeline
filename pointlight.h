@@ -7,12 +7,12 @@
 class PointLight {
 public:
 	V3 lp; // location of point light
-	float ka, kd, res; // ambient and diffuse constants
-	float* zbs[6]; // z buffers per camera
+	float ka, kd; // ambient and diffuse constants
+	int res; // square resolution of shadow map
 	PPC cubeMap[6]; // a PPC for each axis, 90 deg FOV
 
 	PointLight() {};
-	PointLight(V3 lp, float ka, float kd, float res);
+	PointLight(V3 lp, float ka, float kd, int res);
 
 	int selectCam(V3 p); // figures out which camera a given point should be projected to 
 	void setShadowMaps(TM *tms); // set up z buffers for cameras to determine what pixels are in shadow

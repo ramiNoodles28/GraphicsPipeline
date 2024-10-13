@@ -11,6 +11,7 @@
 PPC::PPC(float hfov, int _w, int _h) {
 	w = _w;
 	h = _h;
+	zb = new float[w * h];
 	C = V3(0.0f, 0.0f, 0.0f);
 	a = V3(1.0f, 0.0f, 0.0f);
 	b = V3(0.0f, -1.0f, 0.0f);
@@ -120,6 +121,33 @@ V3 PPC::getViewDirection() {
 float PPC::getFocalLength() {
 	return c * getViewDirection();
 }
+
+void PPC::clearZB() {
+	for (int uv = 0; uv < w * h; uv++)
+		zb[uv] = 0.0f;
+} // clear the z buffer
+
+int PPC::isFarther(int u, int v, float z) {
+	if (getZB(u, v) > z)
+		return 1;
+	return 0;
+} // check if current pixel z is farther than z buffer
+
+int PPC::isCloser(int u, int v, float z) {
+	if (getZB(u, v) < z) {
+		setZB(u, v, z);
+		return 1;
+	}
+	return 0;
+} // check and set if current pixel z is closer than z buffer
+
+float PPC::getZB(int u, int v) {
+	return zb[(h - 1 - v) * w + u];
+} // get z buffer from pixel coordinate
+
+void PPC::setZB(int u, int v, float z) {
+	zb[(h - 1 - v) * w + u] = z;
+} // set z buffer at pixel coordinate
 
 void PPC::loadFromTxt(char *fname) {
 	ifstream ifs(fname);

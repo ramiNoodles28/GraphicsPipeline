@@ -45,6 +45,7 @@ Scene::Scene() {
 	lv = V3(0, 0, 1);
 	lp = V3(0, 0, -110);
 	lp1 = V3(-150.0f, 0, -110);
+
 }
 
 void Scene::Render() {
@@ -99,7 +100,7 @@ void Scene::Render() {
 		}
 		
 	}
-	fb->clearZB();
+	ppc->clearZB();
 	fb->redraw();
 }
 
@@ -324,55 +325,3 @@ void Scene::PathCam() {
 	}
 }
 
-
-void Scene::NameCycle() {
-	for (int pos = 0; pos < (fb->w + 220) * 3 + 1; pos += 5) {
-		fb->set(0xFFFFFFFF);
-		float i = pos % (fb->w + 220);
-		V3 o((i - 220), 50);
-		//V3 o(100, 50);
-		V3 oR = o;
-		V3 oA = o + V3(60, 0);
-		V3 oM = o + V3(130, 0);
-		V3 oI = o + V3(200, 0);
-		unsigned int b = 0xff000000;
-		unsigned int w = 0xffffffff;
-		float h = 80.0f;
-
-		// R leg
-		fb->rasterizeTris(oR, oR + V3(0, h), oR + V3(50, h), b);
-		fb->rasterizeTris(oR + V3(0, 20), oR + V3(0, h), oR + V3(35, h), w);
-		// R backing
-		fb->rasterizeTris(oR, oR + V3(0, h), oR + V3(15, h), b);
-		fb->rasterizeTris(oR, oR + V3(15, h), oR + V3(15, 0), 0xff000000);
-		// R round
-		fb->rasterizeCircle(oR + V3(25, 25), 25, b);
-		fb->rasterizeCircle(oR + V3(25, 25), 10, w);
-
-		// A frame
-		fb->rasterizeTris(oA + V3(30, 0), oA + V3(0, h), oA + V3(60, h), b);
-		fb->rasterizeTris(oA + V3(30, 35), oA + V3(15, h), oA + V3(45, h), w);
-		// A bridge
-		fb->rasterizeTris(oA + V3(45, 60), oA + V3(15, 60), oA + V3(45, 70), 0xff000000);
-		fb->rasterizeTris(oA + V3(15, 60), oA + V3(15, 70), oA + V3(45, 70), 0xff000000);
-
-		// M left peaks
-		fb->rasterizeTris(oM, oM + V3(0, 60), oM + V3(40, 60), b);
-		fb->rasterizeTris(oM + V3(55, 60), oM + V3(55, 0), oM + V3(15, 60), b);
-		fb->rasterizeTris(oM + V3(15, 45), oM + V3(15, 60), oM + V3(25, 60), w);
-		fb->rasterizeTris(oM + V3(40, 45), oM + V3(30, 60), oM + V3(40, 60), w);
-		// M legs
-		fb->rasterizeTris(oM + V3(0, 60), oM + V3(15, 80), oM + V3(15, 60), b);
-		fb->rasterizeTris(oM + V3(0, 60), oM + V3(0, 80), oM + V3(15, 80), b);
-		fb->rasterizeTris(oM + V3(55, 60), oM + V3(40, 60), oM + V3(40, 80), b);
-		fb->rasterizeTris(oM + V3(55, 80), oM + V3(55, 60), oM + V3(40, 80), b);
-
-		// I
-		fb->rasterizeTris(oI, oI + V3(15, 80), oI + V3(15, 0), b);
-		fb->rasterizeTris(oI, oI + V3(0, 80), oI + V3(15, 80), b);
-
-		fb->redraw();
-		Fl::check();
-		//fb->SaveAsTiff("name.tiff");
-	}
-} // rasterize my name and have it translate across frame

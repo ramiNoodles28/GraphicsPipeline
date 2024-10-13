@@ -10,6 +10,7 @@ class PPC {
 public:
 	V3 a, b, c, C; // a and b describe image plane, C is point where eye is, c vector from C to top corner of img plane
 	int w, h; // width and height (in pixels) of image frame
+	float* zb; // z buffer
 	PPC() {}
 	PPC(float hfov, int w, int h); // Constructor from field of view, and w/h of image frame
 
@@ -26,6 +27,13 @@ public:
 	V3 getViewDirection(); // get view direction vector
 	float getFocalLength(); // get focal length
 	//void renderWF(FrameBuffer *fb, float visf, PPC *visppc); // render wireframe of camera THIS CAUSES PROBLEMS
+
+	void clearZB(); // clear the z buffer
+	int isFarther(int u, int v, float z); // check if current pixel z is farther than z buffer
+	int isCloser(int u, int v, float z); // check and set if current pixel z is closer than z buffer
+	void setZB(int u, int v, float z); // set z buffer at pixel coordinate
+	float getZB(int u, int v); // get z buffer from pixel coordinate
+
 	void saveToTxt(char* fname); // save camera parameters to txt file
 	void loadFromTxt(char* fname); // load in camera parameters from txt file
 	friend istream& operator>>(istream& istr, PPC& p); // Stream input
