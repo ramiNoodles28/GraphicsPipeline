@@ -38,13 +38,13 @@ Scene::Scene() {
 	int lNum = 1;
 	pLight = new PointLight[lNum];
 
-	lightingMode = 0;
+	lightingMode = 2;
 	lightType = 0;
-	ka = 0.1f;
+	ka = 0.01f;
 	kd = 1.0f;
 	lv = V3(0, 0, 1);
-	lp = V3(0, 0, -110);
-	lp1 = V3(-150.0f, 0, -110);
+	lp = V3(0, 20, -90);
+	//lp1 = V3(-150.0f, 0, -110);
 
 }
 
@@ -52,7 +52,7 @@ void Scene::Render() {
 	if (!fb) return;
 	fb->set(0xFFFFFFFF);
 	pLight[0] = PointLight(lp, ka, kd, 512);
-	pLight[0].setShadowMaps(tms);
+	pLight[0].setShadowMaps(tms, tmsN);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		//tms[tmi].renderWF(fb, ppc);
@@ -121,8 +121,8 @@ void Scene::FreeCam() {
 	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	tms[1].loadBin("geometry/teapot1k.bin");
-	tms[1].translate(V3(-150, 0.0f, -150.0f) - tms[1].centroid());
-	tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.7f, 0.7f, 0.7f), 100.0f);
+	tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
+	tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
@@ -133,7 +133,7 @@ void Scene::FreeCam() {
 		//tms[1].scaleInPlace(1.0f + 0.01f * sin(t));
 		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 2.0f);
 		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 2.0f);
-		lp1 = lp1.rotateAboutAxis(tms[1].centroid(), V3(0, 1, 0), 2.0f);
+		//lp1 = lp1.rotateAboutAxis(tms[1].centroid(), V3(0, 1, 0), 2.0f);
 		Render();
 		fb->redraw();
 		Fl::check();

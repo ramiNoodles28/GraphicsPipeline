@@ -142,10 +142,12 @@ int PPC::isCloser(int u, int v, float z) {
 } // check and set if current pixel z is closer than z buffer
 
 float PPC::getZB(int u, int v) {
+	if (u < 0 || u >= w || v < 0 || v >= h) return -1.0f;
 	return zb[(h - 1 - v) * w + u];
 } // get z buffer from pixel coordinate
 
 void PPC::setZB(int u, int v, float z) {
+	if (u < 0 || u >= w || v < 0 || v >= h) return;
 	zb[(h - 1 - v) * w + u] = z;
 } // set z buffer at pixel coordinate
 

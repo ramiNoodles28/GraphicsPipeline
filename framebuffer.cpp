@@ -437,9 +437,13 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 				V3 w = efs / triArea;
 				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
 				if (!ppc->isCloser(p[0], p[1], depth)) continue;
-				V3 pixelNormal = (norms ^ w).normalize();
 				V3 baseColor = (color ^ w);
 				V3 pixelPos = (verts ^ w);
+				if (pl.inShadow(pixelPos)) {
+					setGuarded(p[0], p[1], (baseColor * pl.ka).getColor());
+					continue;
+				}
+				V3 pixelNormal = (norms ^ w).normalize();
 				V3 lv = (pl.lp - pixelPos).normalize();
 				float dist = (pl.lp - pixelPos).length();
 				float atten = 1.0; /// (0.005 * dist * dist);
@@ -451,32 +455,6 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 		}
 	}
 }
-
-V3 FrameBuffer::triMins(V3 a, V3 b, V3 c) {
-	return V3(floor(min(a[0], min(b[0], c[0]))),
-		floor(min(a[1], min(b[1], c[1]))));
-}
-
-V3 FrameBuffer::triMaxes(V3 a, V3 b, V3 c) {
-	return V3(ceil(max(a[0], max(b[0], c[0]))),
-		ceil(max(a[1], max(b[1], c[1]))));
-}
-
-float FrameBuffer::edgeFunction(V3 a, V3 b, V3 p) {
-	return p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
-} // returns if point is on right side of edge
-
-V3 FrameBuffer::edgeFunctions(V3 a, V3 b, V3 c, V3 p) {
-	V3 efs;
-	efs[2] = p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
-	efs[0] = p[0] * (c[1] - b[1]) - p[1] * (c[0] - b[0]) - (b[0] * c[1]) + (b[1] * c[0]);
-	efs[1] = p[0] * (a[1] - c[1]) - p[1] * (a[0] - c[0]) - (c[0] * a[1]) + (c[1] * a[0]);
-	return efs;
-} // returns if point is on right side of edge for multiple edges
-
-int FrameBuffer::isCCW(V3 a, V3 b, V3 c) {
-	return ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0;
-} // Calculate the signed area using the cross product
 
 int FrameBuffer::inBounds(V3 p) {
 	return !(p[0] < 0 || p[0] > w - 1 || p[1] < 0 || p[1] > h - 1);

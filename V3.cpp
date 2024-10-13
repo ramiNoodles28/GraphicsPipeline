@@ -139,6 +139,34 @@ V3 V3::rotateDir(V3 dir, float angle) {
 	return ret;
 } // Rotate vector about direction
 
+
+V3 V3::triMins(V3 a, V3 b, V3 c) {
+	return V3(floor(min(a[0], min(b[0], c[0]))),
+		floor(min(a[1], min(b[1], c[1]))));
+}
+
+V3 V3::triMaxes(V3 a, V3 b, V3 c) {
+	return V3(ceil(max(a[0], max(b[0], c[0]))),
+		ceil(max(a[1], max(b[1], c[1]))));
+}
+
+float V3::edgeFunction(V3 a, V3 b, V3 p) {
+	return p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
+} // returns if point is on right side of edge
+
+V3 V3::edgeFunctions(V3 a, V3 b, V3 c, V3 p) {
+	V3 efs;
+	efs[2] = p[0] * (b[1] - a[1]) - p[1] * (b[0] - a[0]) - (a[0] * b[1]) + (a[1] * b[0]);
+	efs[0] = p[0] * (c[1] - b[1]) - p[1] * (c[0] - b[0]) - (b[0] * c[1]) + (b[1] * c[0]);
+	efs[1] = p[0] * (a[1] - c[1]) - p[1] * (a[0] - c[0]) - (c[0] * a[1]) + (c[1] * a[0]);
+	return efs;
+} // returns if point is on right side of edge for multiple edges
+
+int V3::isCCW(V3 a, V3 b, V3 c) {
+	return ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0;
+} // Calculate the signed area using the cross product
+
+
 void V3::setFromColor(unsigned int color) {
 	unsigned char* rgb = (unsigned char*) &color;
 	V3 &v = *this;

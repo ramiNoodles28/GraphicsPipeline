@@ -10,7 +10,7 @@
 #include "TM.h"
 //class PPC;
 
-class FrameBuffer : public Fl_Gl_Window {
+class FrameBuffer : public Fl_Gl_Window, public V3{
 public:
 	unsigned int *pix; // pixel array
 	int w, h; // width and height of frame
@@ -30,6 +30,7 @@ public:
 	void set(unsigned int bgr);
 	void set(int u, int v, unsigned int col);
 	void setGuarded(int u, int v, unsigned int col);
+	int inBounds(V3 p);
 
 	void rasterizeRectangle(int u0, int v0, int l, int h, unsigned int col);
 	int clipRectangle(int& u0, int& v0, int& rw, int& rh);
@@ -44,13 +45,6 @@ public:
 	void renderTris(TM tm, PPC* ppc); // renders filled in tri mesh
 	void renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka); // render mesh with directional light
 	void renderTrisPointLight(TM tm, PPC* ppc, PointLight pl); // render mesh with point light
-
-	V3 triMins(V3 a, V3 b, V3 c); // gets tri min bounds
-	V3 triMaxes(V3 a, V3 b, V3 c); // gets tri max bounds
-	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
-	V3 edgeFunctions(V3 a, V3 b, V3 c, V3 p); // returns if point is on right side of edge for multiple edges
-	int isCCW(V3 a, V3 b, V3 c);
-	int inBounds(V3 p);
 
 	void rasterize2DSegment(V3 p0, V3 p1, unsigned int color, PPC* ppc);
 	void rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC* ppc);

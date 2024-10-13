@@ -30,6 +30,12 @@ public:
 	V3 rotateAboutAxis(V3 aO, V3 aD, float theta); // Rotate vector (point) about axis
 	V3 rotateDir(V3 dir, float angle); // Rotate vector about direction
 
+	V3 triMins(V3 a, V3 b, V3 c); // gets tri min bounds
+	V3 triMaxes(V3 a, V3 b, V3 c); // gets tri max bounds
+	float edgeFunction(V3 a, V3 b, V3 p); // returns if point is on right side of edge
+	V3 edgeFunctions(V3 a, V3 b, V3 c, V3 p); // returns if point is on right side of edge for multiple edges
+	int isCCW(V3 a, V3 b, V3 c); // Calculate the signed area using the cross product
+
 	void setFromColor(unsigned int color); // Set V3 from hex color (0xAABBGGRR) to RGB channels
 	unsigned int getColor(); // Get hex color (0xAABBGGRR) from RGB channels
 	V3 lightColor(V3 lv, float ka, V3 normal); // apply lighting to color vector
