@@ -1,5 +1,7 @@
 #include "pointlight.h"
 
+#include <iostream>
+
 using namespace std;
 
 PointLight::PointLight(V3 lp, float ka, float kd, int res) {
@@ -78,10 +80,12 @@ void PointLight::clipAndProjectTris(M33 tvs) {
 	int faceA = selectCam(tvs[0]);
 	int faceB = selectCam(tvs[1]);
 	int faceC = selectCam(tvs[2]);
+	
 	if (faceA == faceB && faceB == faceC) {
 		updateZB(tvs, faceA);
 	}
 	else { // if tri is projected onto different faces of cubeMap, need to clip tris
+		// TODO: DOES NOT WORK AS INTENDED
 		vector<int> faces = { faceA, faceB, faceC };
 		vector<M33> tris = clipTrisToFaces(tvs, faces);
 		for (M33 tri : tris) {
@@ -89,6 +93,7 @@ void PointLight::clipAndProjectTris(M33 tvs) {
 			updateZB(tvs, f);
 		}
 	}
+	
 } // check if tri verts project to same cube face
 
 vector<M33> PointLight::clipTrisToFaces(M33 tri, vector<int> faces) {
@@ -108,10 +113,11 @@ vector<M33> PointLight::clipTriToFace(M33 tri, int face) {
 		V3 pNorm = plane.first;
 		V3 pPoint = plane.second;
 		newTri = clipToPlane(newTri, pNorm, pPoint);
-
+		
 		if (newTri.size() < 3) return {};
 	}
 	if (newTri.size() == 3) {
+		cerr << newTri.size() << endl;
 		return { M33(newTri[0], newTri[1], newTri[2]) };
 	} else if (newTri.size() == 4) {
 		return { M33(newTri[0], newTri[1], newTri[2]),
@@ -134,6 +140,7 @@ vector<V3> PointLight::clipToPlane(vector<V3> tri, V3 planeNorm, V3 planePoint) 
 			clipVerts.push_back(intersect);
 		}
 	}
+	
 	return clipVerts;
 }
 

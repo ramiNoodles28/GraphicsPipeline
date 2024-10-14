@@ -35,69 +35,34 @@ Scene::Scene() {
 	tmsN = 3;
 	tms = new TM[tmsN];
 
-	int lNum = 1;
+	lNum = 2;
 	pLight = new PointLight[lNum];
 
 	lightingMode = 2;
 	lightType = 0;
-	ka = 0.01f;
+	ka = 0.02f;
 	kd = 1.0f;
 	lv = V3(0, 0, 1);
-	lp = V3(0, 20, -90);
-	//lp1 = V3(-150.0f, 0, -110);
+	lp = V3(0, 10, -90);
+	lp1 = V3(-150.0f, 0, -110);
 
 }
 
 void Scene::Render() {
 	if (!fb) return;
 	fb->set(0xFFFFFFFF);
+	V3 lps[] = { lp, lp1 };
+	/*for (int l = 0; l < lNum; l++) {
+		pLight[l] = PointLight(lps[l], ka, kd, 512);
+		pLight[l].setShadowMaps(tms, tmsN);
+	}*/
 	pLight[0] = PointLight(lp, ka, kd, 512);
 	pLight[0].setShadowMaps(tms, tmsN);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		//tms[tmi].renderWF(fb, ppc);
-		
-		
-		
-		switch (lightType % 2) {
-		case 0: // point light
-			
-			fb->renderPoint(lp, 3.5, V3(0, 0, 0), ppc);
-			fb->renderPoint(lp1, 3.5, V3(0, 0, 0), ppc);
-			switch (lightingMode) {
-			case 1:
-				tms[tmi].lightMeshPointRGB(lp, ka);
-				fb->renderTris(tms[tmi], ppc);
-				break;
-			case 2:
-				fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
-				break;
-			case 3:
-				if (tmi == 0) fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
-				else {
-					tms[tmi].lightMeshPointRGB(lp1, ka);
-					fb->renderTris(tms[tmi], ppc);
-				} break;
-			default:
-				fb->renderTris(tms[tmi], ppc);
-				break;
-			}
-			break;
-		default: // directional light
-			switch (lightingMode) {
-			case 1:
-				tms[tmi].lightMeshDirRGB(lv, ka);
-				fb->renderTris(tms[tmi], ppc);
-				break;
-			case 2:
-				fb->renderTrisDirLight(tms[tmi], ppc, lv, ka);
-				break;
-			default:
-				fb->renderTris(tms[tmi], ppc);
-				break;
-			}
-			break;
-		}
+		fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
+		fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
 		
 	}
 	ppc->clearZB();
@@ -118,7 +83,7 @@ void Scene::FreeCam() {
 			"\nLeft/Right Arrow - Pan"
 			"\nScroll Wheel - Zoom" << endl;
 	fb->clear();
-	tms[0].loadBin("geometry/teapot1K.bin");
+	tms[0].loadBin("geometry/teapot57K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	tms[1].loadBin("geometry/teapot1k.bin");
 	tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
@@ -131,9 +96,9 @@ void Scene::FreeCam() {
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.5f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
 		//tms[1].scaleInPlace(1.0f + 0.01f * sin(t));
-		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 2.0f);
-		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 2.0f);
-		//lp1 = lp1.rotateAboutAxis(tms[1].centroid(), V3(0, 1, 0), 2.0f);
+		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 4.0f);
+		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 4.0f);
+		//lp1 = lp1.rotateAboutAxis(tms[0].centroid(), V3(0, 0, 1), 4.0f);
 		Render();
 		fb->redraw();
 		Fl::check();
@@ -148,10 +113,10 @@ void Scene::LightControl() {
 		"\nJ - Left "
 		"\nL - Right"
 		"\nU - Up "
-		"\nP - Down "  << endl;
+		"\nO - Down "  << endl;
 	fb->clear();
-	tms[0].loadBin("geometry/teapot1K.bin");
-	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	//tms[0].loadBin("geometry/teapot57K.bin");
+	//tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	lightType = 0;
 	fb->lp = lp;
 	while (true) {
@@ -163,20 +128,35 @@ void Scene::LightControl() {
 	}
 }
 void Scene::SM1() { 
-	cerr << "sm1: no lighting" << endl;
-	lightingMode = 0;
+	cerr << "Move Cam" << endl;
+	//lightingMode = 0;
 } // No lighting, using only baked colors
+
 void Scene::SM2() {
-	cerr << "sm2: per vertex lighting" << endl;
-	lightingMode = 1;
+	cerr << "Move Object" << endl;
+	fb->clear();
+	float t = 0.0f;
+	while (true) {
+		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.5f);
+		tms[0].translate(V3(cos(t) * 5.0f, 0.0f, 0.0f));
+		Render();
+		fb->redraw();
+		Fl::check();
+		t += 0.1f;
+	}
 } // Per Vertex Lighting
+
+
+
+
+
 void Scene::SM3() {
 	cerr << "sm3: per pixel lighting" << endl;
-	lightingMode = 2;
+	//lightingMode = 2;
 } // Per Pixel Lighting
 void Scene::SM23() {
 	cerr << "sm2 & sm3" << endl;
-	lightingMode = 3;
+	//lightingMode = 3;
 } // Per Pixel Lighting
 void Scene::LightType() {
 	lightType++;

@@ -22,6 +22,7 @@ public:
     float determinant(); // Get matrix determinant
     M33 transpose(); // Transpose matrix
     M33 invert(); // Invert matrix
+    V3 avg(); // returns the average of the 3 row vectors
     void SetRotY(float theta);
 
     V3 getCol(int i); // Get column i

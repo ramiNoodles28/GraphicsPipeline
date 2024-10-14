@@ -80,7 +80,6 @@ M33 M33::transpose() {
 } // Transpose matrix
 
 M33 M33::invert() {
-
 	M33 ret;
 	V3 a = getCol(0), b = getCol(1), c = getCol(2);
 	V3 _a = b ^ c; _a = _a * (1.0f / (a * _a));
@@ -89,10 +88,14 @@ M33 M33::invert() {
 	ret[0] = _a;
 	ret[1] = _b;
 	ret[2] = _c;
-
 	return ret;
-
 }
+
+V3 M33::avg() {
+    M33& m = *this;
+    return (m[0] + m[1] + m[2]) / 3.0f;
+}
+
 
 void M33::SetRotY(float theta) {
 

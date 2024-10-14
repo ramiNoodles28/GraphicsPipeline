@@ -22,6 +22,7 @@ public:
 	float ka;
 	float kd;
 	V3 lv, lp, lp1;
+	int lNum;
 	PointLight* pLight; // point light objects
 
 	Scene();
