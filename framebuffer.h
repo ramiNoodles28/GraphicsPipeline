@@ -16,9 +16,8 @@ public:
 	int w, h; // width and height of frame
 	float* zb; // z buffer
 	int s; // scale of camera movement
-	int lightType;
-	V3 lv, lp;
 	PPC *cam;
+	V3 lp;
 
 	FrameBuffer(int u0, int v0, int _w, int _h);
 	void addCam(PPC* c);
@@ -29,6 +28,7 @@ public:
 	void saveAsTiff(char* fname);
 	void set(unsigned int bgr);
 	void set(int u, int v, unsigned int col);
+	unsigned int get(int u, int v);
 	void setGuarded(int u, int v, unsigned int col);
 	int inBounds(V3 p);
 
@@ -39,8 +39,11 @@ public:
 	void rasterizeTris(V3 p0, V3 p1, V3 p2, unsigned int color, PPC* ppc);
 	void rasterizeTris(V3 a, V3 b, V3 c, M33 colors, PPC* ppc); // unlit vector interpolated raster
 	void rasterizeTrisDirLight(V3 a, V3 b, V3 c, M33 color, M33 norms, V3 lv, float ka, PPC* ppc); // directionally lit per pixel raster
-	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, M33 verts, M33 color, M33 norms, PointLight pl, PPC* ppc);  // point lit per pixel raster
-
+	void rasterizeTrisPointLight(V3 a, V3 b, V3 c, 
+		M33 verts, M33 color, M33 norms, M33 texCoords, 
+		Texture *tex, PointLight pl, PPC* ppc);  // point lit per pixel raster
+	void rasterizeTrisPointLight(V3 a, V3 b, V3 c,
+		M33 verts, M33 color, M33 norms, PointLight pl, PPC* ppc);  // point lit per pixel raster
 	void renderWF(TM tm, PPC* ppc); // renders wireframe of mesh
 	void renderTris(TM tm, PPC* ppc); // renders filled in tri mesh
 	void renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka); // render mesh with directional light
@@ -51,4 +54,5 @@ public:
 	void render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc);
 	void renderPoint(V3 p, float r, V3 c, PPC* ppc);
 
+	void setChecker(int csize, V3 c0, V3 c1);
 };

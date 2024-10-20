@@ -67,10 +67,10 @@ GUI::GUI() {
     int h = 30; int w = 80; int p = 15;
   { uiw = new Fl_Double_Window(300, 250, "GUI");
     uiw->user_data((void*)(this));
-    /*{ Fl_Button* o = new Fl_Button(p, p, w, h, "DBG");
+    { Fl_Button* o = new Fl_Button(p, 2*(p + h) + p, w, h, "DBG");
       o->selection_color(FL_DARK_RED);
       o->callback((Fl_Callback*)cb_DBG);
-    } // Fl_Button* o */
+    } // Fl_Button* o 
     { Fl_Button* o = new Fl_Button(p, p, w, h, "Free Cam");
       o->callback((Fl_Callback*)cb_FreeCam);
     } // Fl_Return_Button* o

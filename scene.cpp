@@ -60,9 +60,10 @@ void Scene::Render() {
 	pLight[0].setShadowMaps(tms, tmsN);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
-		//tms[tmi].renderWF(fb, ppc);
+		
 		fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
 		fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
+		//fb->renderWF(tms[tmi], ppc);
 		
 	}
 	ppc->clearZB();
@@ -83,21 +84,41 @@ void Scene::FreeCam() {
 			"\nLeft/Right Arrow - Pan"
 			"\nScroll Wheel - Zoom" << endl;
 	fb->clear();
-	tms[0].loadBin("geometry/teapot57K.bin");
-	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-	tms[1].loadBin("geometry/teapot1k.bin");
-	tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
-	tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
-	//Render();
+/*	{
+		tms[0].loadBin("geometry/teapot57K.bin");
+		tms[0].texFlag = 0;
+		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+		tms[1].loadBin("geometry/teapot1k.bin");
+		tms[1].texFlag = 0;
+		tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
+		tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
+		tms[2].texFlag = 0;
+	} */
+	{
+		float rw = 100.0f;
+		float rh = 50.0f;
+		tms[0].setRectangle(rw, rh);
+		tms[0].translate(V3(0.0f, 0.0f, -150.0f));
+		
+		tms[1].setRectangle(rw, rh);
+		tms[1].rotate(tms[1].centroid(), V3(0, 1, 0), 180.0f);
+		tms[1].translate(V3(0.0f, 0.0f, -150.0f));
+		//tms[1].checkerTexture(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
+		//tms[0].checkerTexture(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
+		tms[0].xTexture(V3(.9f, .9f, .9f), V3(0, 0, 0));
+		tms[1].xTexture(V3(.9f, .9f, .9f), V3(0, 0, 0));
+		//tms[0].setTexture("textures/sultan.tif");
+	}
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
 	while (true) {
-		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.5f);
+		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.4f);
+		tms[1].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.4f);
 		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
 		//tms[1].scaleInPlace(1.0f + 0.01f * sin(t));
-		lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 4.0f);
-		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 4.0f);
+		//lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 4.0f);
+		//lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 4.0f);
 		//lp1 = lp1.rotateAboutAxis(tms[0].centroid(), V3(0, 0, 1), 4.0f);
 		Render();
 		fb->redraw();
@@ -127,6 +148,7 @@ void Scene::LightControl() {
 		Fl::check();
 	}
 }
+
 void Scene::SM1() { 
 	cerr << "Move Cam" << endl;
 	//lightingMode = 0;
@@ -146,18 +168,16 @@ void Scene::SM2() {
 	}
 } // Per Vertex Lighting
 
-
-
-
-
 void Scene::SM3() {
 	cerr << "sm3: per pixel lighting" << endl;
 	//lightingMode = 2;
 } // Per Pixel Lighting
+
 void Scene::SM23() {
 	cerr << "sm2 & sm3" << endl;
 	//lightingMode = 3;
 } // Per Pixel Lighting
+
 void Scene::LightType() {
 	lightType++;
 	switch (lightType % 3) {
@@ -169,28 +189,25 @@ void Scene::LightType() {
 	}
 } // Per Pixel Lighting
 
-
-
-
 /////////////////// funny stuff
-
-
-void Scene::loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum) {
-	ifstream ifs(fname);
-	if (!ifs.is_open()) {
-		cerr << "ERROR: Could not open file: " << fname << endl;
-		return;
-	}
-	for (int i = 0; i < camNum; i++) {
-		ifs >> ppcs[i];
-		cerr << ppcs[i].C << endl;
-	}
-	ifs.close();
-}
 
 void Scene::DBG() {
 	cerr << endl;
 
+	{
+		float rw = 100.0f;
+		float rh = 50.0f;
+		tms[0].setRectangle(rw, rh);
+		tms[0].setAllColors(V3(1.0f, 0.0f, 0.0f));
+		tms[0].translate(V3(0.0f, 0.0f, -200.0f));
+		Texture* tex = 0;
+		tex = new Texture(200, 100);
+		tex->loadTiff("textures/sultan.tif");
+		tms[0].tex = tex;
+		Render();
+
+		return;
+	}
 	{
 		tms[0].loadBin("geometry/teapot1K.bin");
 		V3 centroid;
@@ -232,6 +249,19 @@ void Scene::DBG() {
 		*ppc = ppc0;
 		return;
 	}
+}
+
+void Scene::loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum) {
+	ifstream ifs(fname);
+	if (!ifs.is_open()) {
+		cerr << "ERROR: Could not open file: " << fname << endl;
+		return;
+	}
+	for (int i = 0; i < camNum; i++) {
+		ifs >> ppcs[i];
+		cerr << ppcs[i].C << endl;
+	}
+	ifs.close();
 }
 
 void Scene::RotatingPoints() {

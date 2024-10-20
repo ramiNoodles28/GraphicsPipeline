@@ -11,6 +11,7 @@ void TM::allocateMemory() {
 	colors = new V3[vertsN];
 	bakedColors = new V3[vertsN];
 	normals = new V3[vertsN];
+	texCoords = new V3[vertsN];
 	tris = new unsigned int[3*trisN];
 }
 
@@ -22,9 +23,21 @@ void TM::setRectangle(float rw, float rh) {
 	verts[1] = V3(-rw / 2.0f, -rh / 2.0f, 0.0f);
 	verts[2] = V3(+rw / 2.0f, -rh / 2.0f, 0.0f);
 	verts[3] = V3(+rw / 2.0f, +rh / 2.0f, 0.0f);
+
+	texCoords[0] = V3(0.f, 0.f, 0.0f);
+	texCoords[1] = V3(0.f, 1.f, 0.0f);
+	texCoords[2] = V3(1.f, 1.f, 0.0f);
+	texCoords[3] = V3(1.f, 0.f, 0.0f);
+
+	normals[0] = V3(0.f, 0.f, 1.0f);
+	normals[1] = V3(0.f, 0.f, 1.0f);
+	normals[2] = V3(0.f, 0.f, 1.0f);
+	normals[3] = V3(0.f, 0.f, 1.0f);
 	int tri = 0;
 	tris[tri * 3 + 0] = 0; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 2; tri++;
 	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0; tri++;
+	this->rw = rw;
+	this->rh = rh;
 }
 
 void TM::setGroundPlane(V3 center, V3 color, float s) {
@@ -147,19 +160,19 @@ void TM::loadBin(char *fname) {
 	if (yn == 'y')
 		normals = new V3[vertsN];
 	ifs.read(&yn, 1); // texture coordinates 2 floats
-	float *tcs = 0; // don't have texture coordinates for now
-	if (tcs)
-		delete tcs;
-	tcs = 0;
+	V3* texCoords = 0; // don't have texture coordinates for now
+	if (texCoords)
+		delete texCoords;
+	texCoords = 0;
 	if (yn == 'y')
-		tcs = new float[vertsN * 2];
+		texCoords = new V3[vertsN * 2];
 	ifs.read((char*)verts, vertsN * 3 * sizeof(float)); // load verts
 	if (colors)
 		ifs.read((char*)colors, vertsN * 3 * sizeof(float)); // load cols
 	if (normals)
 		ifs.read((char*)normals, vertsN * 3 * sizeof(float)); // load normals
-	if (tcs)
-		ifs.read((char*)tcs, vertsN * 2 * sizeof(float)); // load texture coordinates
+	if (texCoords)
+		ifs.read((char*)texCoords, vertsN * 2 * sizeof(float)); // load texture coordinates
 	ifs.read((char*)&trisN, sizeof(int));
 	if (tris)
 		delete tris;
@@ -170,7 +183,7 @@ void TM::loadBin(char *fname) {
 	ifs.read((char*)tris, trisN * 3 * sizeof(unsigned int)); // read tiangles
 	ifs.close();
 	cerr << "INFO: loaded " << vertsN << " verts, " << trisN << " tris from " << endl << "      " << fname << endl;
-	cerr << "      xyz " << ((colors) ? "rgb " : "") << ((normals) ? "nxnynz " : "") << ((tcs) ? "tcstct " : "") << endl;
+	cerr << "      xyz " << ((colors) ? "rgb " : "") << ((normals) ? "nxnynz " : "") << ((texCoords) ? "tcstct " : "") << endl;
 }
 
 void TM::scaleInPlace(float scf) {
@@ -219,3 +232,28 @@ void TM::lightMeshBW(V3 lv, float ks, float ka) {
 	for (int vi = 0; vi < vertsN; vi++)
 		colors[vi] = V3(ks,ks,ks).lightColor(lv, ka, normals[vi]);
 }
+
+void TM::setTexRes(int w, int h) {
+	rw = w;
+	rh = h;
+}
+
+
+void TM::setTexture(char* fname) {
+	Texture* temp = new Texture(rw, rh);
+	temp->loadTiff(fname);
+	tex = temp;
+}
+
+void TM::checkerTexture(int cSize, V3 rgb0, V3 rgb1) {
+	Texture* temp = new Texture(rw, rh);
+	temp->setChecker(cSize, rgb0, rgb1);
+	tex = temp;
+}
+
+void TM::xTexture(V3 rgb0, V3 rgb1) {
+	Texture* temp = new Texture(rw, rh);
+	temp->setXTex(rgb0, rgb1);
+	tex = temp;
+}
+

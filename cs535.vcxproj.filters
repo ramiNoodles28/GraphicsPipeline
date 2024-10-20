@@ -11,6 +11,7 @@
     <ClCompile Include="easing.cpp" />
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="pointlight.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framebuffer.h" />
@@ -23,5 +24,6 @@
     <ClInclude Include="easing.h" />
     <ClInclude Include="shaders.h" />
     <ClInclude Include="pointlight.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
 </Project>

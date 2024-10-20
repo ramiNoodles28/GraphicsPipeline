@@ -16,9 +16,7 @@ FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	zb = new float[w * h];
 	cam = NULL;
 	s = 1;
-	lightType = 0;
-	lv = V3(0, 0, 1);
-	lp = V3(0, 0, -110);
+	lp = V3(0, 0, 0);
 }
 
 void FrameBuffer::addCam(PPC *c) {
@@ -217,6 +215,10 @@ void FrameBuffer::set(int u, int v, unsigned int col) {
 	pix[(h - 1 - v)*w + u] = col;
 }
 
+unsigned int FrameBuffer::get(int u, int v) {
+	return pix[(h - 1 - v) * w + u];
+}
+
 void FrameBuffer::rasterizeRectangle(int u0, int v0, int rw, int rh,unsigned int col) {
 	if (!clipRectangle(u0, v0, rw, rh))
 		return;
@@ -304,8 +306,6 @@ void FrameBuffer::rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC* ppc) {
 		V3 cc = c0 + (c1 - c0)*t;
 		int u = (int)p[0];
 		int v = (int)p[1];
-		if (ppc->isFarther(u, v, p[2])) continue;
-		ppc->setZB(u, v, p[2]);
 		setGuarded(u, v, cc.getColor());
 	}
 }
@@ -416,14 +416,66 @@ void FrameBuffer::renderTrisPointLight(TM tm, PPC* ppc, PointLight pl) {
 			tvs[vi] = tm.verts[vinds[vi]];
 			ppc->project(tvs[vi], pvs[vi]);
 		}
-		rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
-			M33(tvs[0], tvs[1], tvs[2]),
-			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
-			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), pl, ppc);
+		if (tm.texFlag)
+			rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
+				M33(tvs[0], tvs[1], tvs[2]),
+				M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
+				M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), 
+				M33(tm.texCoords[vinds[0]], tm.texCoords[vinds[1]], tm.texCoords[vinds[2]]), 
+				tm.tex, pl, ppc);
+		else
+			rasterizeTrisPointLight(pvs[0], pvs[1], pvs[2],
+				M33(tvs[0], tvs[1], tvs[2]),
+				M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
+				M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]), pl, ppc);
 	}
 } // render mesh with point light
 
 void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c, 
+			M33 verts, M33 color, M33 norms, M33 texCoords, Texture *tex, PointLight pl, PPC* ppc) {
+	V3 p(0, 0);
+	V3 mins = triMins(a, b, c);
+	V3 maxes = triMaxes(a, b, c);
+	float triArea = edgeFunction(a, b, c);
+	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
+		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
+			if (!inBounds(p)) continue;
+			V3 efs = edgeFunctions(a, b, c, p);
+			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
+				V3 w = efs / triArea;
+				float invDepths = w * V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
+				float depth = (invDepths);
+
+				if (!ppc->isCloser(p[0], p[1], depth)) continue;
+				// TODO fix perspective distortion for texture mapping.
+				V3 baseColor = (color ^ w);
+				if (tex) {
+					V3 pixelTexCoord = texCoords ^ w;
+					float s = pixelTexCoord[0] - (float)((int)pixelTexCoord[0]);
+					float t = pixelTexCoord[1] - (float)((int)pixelTexCoord[1]);
+					int tu = (int)(s * (float)tex->w);
+					int tv = (int)(t * (float)tex->h);
+					baseColor.setFromColor(tex->get(tu, tv));
+				}
+				V3 pixelPos = (verts ^ w);
+				if (pl.inShadow(pixelPos)) {
+					setGuarded(p[0], p[1], (baseColor * pl.ka).getColor());
+					continue;
+				}
+				V3 pixelNormal = (norms ^ w).normalize();
+				V3 lv = (pl.lp - pixelPos).normalize();
+				float dist = (pl.lp - pixelPos).length();
+				float atten = 1.0; /// (0.005 * dist * dist);
+				float diffuse = max(0.0f, pixelNormal * lv);
+				V3 pixelColor = baseColor.lightColor(lv, pl.ka, pixelNormal);
+				pixelColor = baseColor * diffuse * atten + (baseColor * pl.ka);
+				setGuarded(p[0], p[1], pixelColor.getColor());
+			}
+		}
+	}
+}
+
+void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 			M33 verts, M33 color, M33 norms, PointLight pl, PPC* ppc) {
 	V3 p(0, 0);
 	V3 mins = triMins(a, b, c);
@@ -435,8 +487,13 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 			V3 efs = edgeFunctions(a, b, c, p);
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
-				float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
+				V3 invDepths = V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
+				float depth = (w * invDepths);
+				//float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
+
 				if (!ppc->isCloser(p[0], p[1], depth)) continue;
+
+				//cerr << "NONONONO" << endl;
 				V3 baseColor = (color ^ w);
 				V3 pixelPos = (verts ^ w);
 				if (pl.inShadow(pixelPos)) {
@@ -487,4 +544,18 @@ void FrameBuffer::renderPoint(V3 p, float r, V3 c, PPC *ppc) {
 }
 
 
+void FrameBuffer::setChecker(int csize, V3 c0, V3 c1) {
+
+	for (int v = 0; v < h; v++) {
+		for (int u = 0; u < w; u++) {
+			int cv = v / csize;
+			int cu = u / csize;
+			if ((cu + cv) % 2)
+				set(u, v, c0.getColor());
+			else
+				set(u, v, c1.getColor());
+		}
+	}
+
+}
 
