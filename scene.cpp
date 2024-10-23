@@ -32,7 +32,7 @@ Scene::Scene() {
 	gui->show();
 	gui->uiw->position(u0, v0 + fb->h + v0);
 
-	tmsN = 3;
+	tmsN = 6;
 	tms = new TM[tmsN];
 
 	lNum = 2;
@@ -43,9 +43,16 @@ Scene::Scene() {
 	ka = 0.02f;
 	kd = 1.0f;
 	lv = V3(0, 0, 1);
-	lp = V3(0, 10, -90);
+	lp = V3(0, 50, -30);
 	lp1 = V3(-150.0f, 0, -110);
 
+	tex = new Texture(50, 50);
+	mirrorTiles = 0;
+	texType = 0;
+	tileNum = 2;
+	tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
+	ppc->translate(V3(0, 65, 0));
+	ppc->tilt(-25.0f);
 }
 
 void Scene::Render() {
@@ -61,7 +68,7 @@ void Scene::Render() {
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		
-		fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
+		//fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
 		fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
 		//fb->renderWF(tms[tmi], ppc);
 		
@@ -84,48 +91,60 @@ void Scene::FreeCam() {
 			"\nLeft/Right Arrow - Pan"
 			"\nScroll Wheel - Zoom" << endl;
 	fb->clear();
-/*	{
-		tms[0].loadBin("geometry/teapot57K.bin");
-		tms[0].texFlag = 0;
-		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-		tms[1].loadBin("geometry/teapot1k.bin");
-		tms[1].texFlag = 0;
-		tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
-		tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
-		tms[2].texFlag = 0;
-	} */
+	V3 center(0, 0, -150.0f);
 	{
-		float rw = 100.0f;
+		float rw = 50.0f;
 		float rh = 50.0f;
-		tms[0].setRectangle(rw, rh);
-		tms[0].translate(V3(0.0f, 0.0f, -150.0f));
-		
+		float rd = 50.0f;
+		tms[0].setRectangle(rw, rh); // front
 		tms[1].setRectangle(rw, rh);
-		tms[1].rotate(tms[1].centroid(), V3(0, 1, 0), 180.0f);
-		tms[1].translate(V3(0.0f, 0.0f, -150.0f));
-		//tms[1].checkerTexture(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
-		//tms[0].checkerTexture(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
-		tms[0].xTexture(V3(.9f, .9f, .9f), V3(0, 0, 0));
-		tms[1].xTexture(V3(.9f, .9f, .9f), V3(0, 0, 0));
-		//tms[0].setTexture("textures/sultan.tif");
+		tms[1].rotate(tms[1].centroid(), V3(0, 1, 0), 180.0f); // back
+
+		tms[2].setRectangle(rd, rh);
+		tms[2].rotate(tms[2].centroid(), V3(0, 1, 0), 90.0f);
+		tms[3].setRectangle(rd, rh);
+		tms[3].rotate(tms[3].centroid(), V3(0, -1, 0), 90.0f);
+
+		tms[4].setRectangle(rw, rh);
+		tms[4].rotate(tms[4].centroid(), V3(-1, 0, 0), 90.0f);
+		tms[5].setRectangle(rw, rh);
+		tms[5].rotate(tms[5].centroid(), V3(1, 0, 0), 90.0f);
+
+		
+
+		tms[0].translate(center + V3(0, 0, rd / 2.0f));
+		tms[1].translate(center - V3(0, 0, rd / 2.0f));
+		tms[2].translate(center + V3(rw / 2.0f, 0, 0));
+		tms[3].translate(center - V3(rw / 2.0f, 0, 0));
+		tms[4].translate(center + V3(0, rh / 2.0f, 0));
+		tms[5].translate(center - V3(0, rh / 2.0f, 0));
+
+		
+		
+		tileNum = 2.0f;
+		for (int i = 0; i < 6; i++) {
+			tms[i].tex = tex;
+			tms[i].scaleTex(tileNum);
+		}
 	}
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
 	while (true) {
-		tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.4f);
-		tms[1].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), 0.4f);
-		//tms[0].rotate(tms[0].centroid(), V3(0.0f, 1.0f, 0.0f), cos(t) * 10.0f);
-		//tms[1].scaleInPlace(1.0f + 0.01f * sin(t));
-		//lv = lv.rotateAboutAxis(V3(0, 0, 0), V3(0, 1, 0), 4.0f);
-		//lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 4.0f);
-		//lp1 = lp1.rotateAboutAxis(tms[0].centroid(), V3(0, 0, 1), 4.0f);
+		for (int i = 0; i < 6; i++) {
+			tms[i].rotate(center, V3(0.0f, 1.0f, 0.0f), cos(t));
+			tms[i].rotate(center, V3(1.0f, 0.0f, 0.0f), 0.001f);
+			tms[i].rotate(center, V3(0.0f, 0.0f, 1.0f), sin(t));
+		}
+
+		tex->mirrorTile = mirrorTiles;
 		Render();
 		fb->redraw();
 		Fl::check();
-		t += 0.1f;
+		t += 0.01f;
 	}
 }
+
 void Scene::LightControl() {
 	cerr << "INFO: pressed Light Control button on GUI" << endl;
 	cerr << "Point Light Controls: "
@@ -136,19 +155,54 @@ void Scene::LightControl() {
 		"\nU - Up "
 		"\nO - Down "  << endl;
 	fb->clear();
-	//tms[0].loadBin("geometry/teapot57K.bin");
-	//tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
 	lightType = 0;
 	fb->lp = lp;
 	while (true) {
 		lp = fb->lp;
-
 		Render();
 		fb->redraw();
 		Fl::check();
 	}
 }
 
+void Scene::TilePlus() {
+	for (int i = 0; i < 6; i++) {
+		tms[i].scaleTex(0.5f);
+	}
+}
+void Scene::TileMinus() {
+	for (int i = 0; i < 6; i++) {
+		tms[i].scaleTex(2.0f);
+	}
+}
+void Scene::TileMirror() {
+	mirrorTiles = (mirrorTiles) ? 0 : 1;
+}
+
+void Scene::DBG() {
+	texType = (texType > 3) ? 0 : texType + 1;
+	switch (texType) {
+	case 0:
+		tex->w = 50; tex->h = 50;
+		tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
+		break;
+	case 1:
+		tex->w = 50; tex->h = 50;
+		tex->setXTex(V3(.9f, .9f, .9f), V3(0, 0, 0));
+		break;
+	case 2:
+		tex->loadTiff("textures/brick.tif");
+		break;
+	case 3:
+		tex->loadTiff("textures/diamond_ore.tif");
+		break;
+	default:
+		tex->loadTiff("textures/light_gray_glazed_terracotta.tif");
+	}
+}
+
+/////////////////// funny stuff
+///
 void Scene::SM1() { 
 	cerr << "Move Cam" << endl;
 	//lightingMode = 0;
@@ -189,67 +243,9 @@ void Scene::LightType() {
 	}
 } // Per Pixel Lighting
 
-/////////////////// funny stuff
 
-void Scene::DBG() {
-	cerr << endl;
 
-	{
-		float rw = 100.0f;
-		float rh = 50.0f;
-		tms[0].setRectangle(rw, rh);
-		tms[0].setAllColors(V3(1.0f, 0.0f, 0.0f));
-		tms[0].translate(V3(0.0f, 0.0f, -200.0f));
-		Texture* tex = 0;
-		tex = new Texture(200, 100);
-		tex->loadTiff("textures/sultan.tif");
-		tms[0].tex = tex;
-		Render();
 
-		return;
-	}
-	{
-		tms[0].loadBin("geometry/teapot1K.bin");
-		V3 centroid;
-		tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-		tms[1] = tms[0].boundingbox();
-		tms[2] = tms[1].boundingbox();
-		tms[2].translate(V3(-150, 0.0f, -150.0f) - tms[2].centroid());
-		//tms[3] = tms[2].boundingbox();
-		//tms[3].translate(V3(-150, 0.0f, 150.0f) - tms[3].centroid());
-
-		centroid = V3(0.0f, 0.0f, -150.0f);
-
-		V3 newC = centroid + V3(100.0f, 150.0f, 0.0f);
-		V3 newVD = (centroid - newC).normalize();
-		V3 newUpG(0.0f, 1.0f, 0.0f);
-		PPC ppc0 = *ppc;
-		ppc->setPose(newC, newVD, newUpG);
-		//ppc->pan(-30.0f);
-		PPC ppc1 = *ppc;
-		Render();
-		fb->redraw();
-
-		int loop = 1800;
-
-		for (int fi = 8; fi < loop; fi++) {
-			Render();
-			//ppc2.renderWF(fb, 10.0f, ppc);
-			fb->redraw();
-			Fl::check();
-			//ppc2.translate(V3(.1f, 0.0f, 0.0f));
-			//tms[0].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
-			//tms[1].rotate(centroid, V3(0.0f, 1.0f, 0.0f), 0.5f);
-			//tms[0].scaleInPlace(0.999f);
-			//ppc->translate(V3(1.0f, 0.0f, 0.0f));
-			float t = (float)fi / (float)loop;
-			//ppc->pan(0.1f);
-			ppc->interpCam(ppc0, ppc1, t, easeOutBounce);
-		}
-		*ppc = ppc0;
-		return;
-	}
-}
 
 void Scene::loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum) {
 	ifstream ifs(fname);

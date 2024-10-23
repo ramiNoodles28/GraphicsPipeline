@@ -25,11 +25,21 @@ public:
 	int lNum;
 	PointLight* pLight; // point light objects
 
+	int texType;
+	int mirrorTiles;
+	int tileNum;
+	Texture* tex;
+
 	Scene();
 	void DBG();
 	void FreeCam();
-
 	void LightControl();
+
+	void TileMinus();
+	void TilePlus();
+	void TileMirror();
+
+	// old stuff
 	void SM1();
 	void SM2();
 	void SM3();

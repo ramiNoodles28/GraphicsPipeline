@@ -219,6 +219,15 @@ unsigned int FrameBuffer::get(int u, int v) {
 	return pix[(h - 1 - v) * w + u];
 }
 
+//// Rasterization Functions
+
+V3 FrameBuffer::perspectiveInterp(M33 m, V3 inv, V3 w) {
+	V3 vA = m.getCol(0) * inv[0];
+	V3 vB = m.getCol(1) * inv[1];
+	V3 vC = m.getCol(2) * inv[2];
+	return (vA * w[0] + vB * w[1] + vC * w[2]) / (w * inv);
+}
+
 void FrameBuffer::rasterizeRectangle(int u0, int v0, int rw, int rh,unsigned int col) {
 	if (!clipRectangle(u0, v0, rw, rh))
 		return;
@@ -443,26 +452,19 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 			V3 efs = edgeFunctions(a, b, c, p);
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
-				float invDepths = w * V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
-				float depth = (invDepths);
-
+				V3 inv = V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
+				float invDepths = w *inv;
+				float depth = invDepths;
 				if (!ppc->isCloser(p[0], p[1], depth)) continue;
-				// TODO fix perspective distortion for texture mapping.
-				V3 baseColor = (color ^ w);
-				if (tex) {
-					V3 pixelTexCoord = texCoords ^ w;
-					float s = pixelTexCoord[0] - (float)((int)pixelTexCoord[0]);
-					float t = pixelTexCoord[1] - (float)((int)pixelTexCoord[1]);
-					int tu = (int)(s * (float)tex->w);
-					int tv = (int)(t * (float)tex->h);
-					baseColor.setFromColor(tex->get(tu, tv));
-				}
-				V3 pixelPos = (verts ^ w);
+				
+				V3 pixelTexCoord = perspectiveInterp(texCoords, inv, w);
+				V3 baseColor = tex->getTex(pixelTexCoord);
+				V3 pixelPos = verts ^ w;
 				if (pl.inShadow(pixelPos)) {
 					setGuarded(p[0], p[1], (baseColor * pl.ka).getColor());
 					continue;
 				}
-				V3 pixelNormal = (norms ^ w).normalize();
+				V3 pixelNormal = norms ^ w;
 				V3 lv = (pl.lp - pixelPos).normalize();
 				float dist = (pl.lp - pixelPos).length();
 				float atten = 1.0; /// (0.005 * dist * dist);
@@ -487,15 +489,14 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 			V3 efs = edgeFunctions(a, b, c, p);
 			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
 				V3 w = efs / triArea;
-				V3 invDepths = V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
-				float depth = (w * invDepths);
-				//float depth = 1.0f / (w[0] * a[2] + w[1] * b[2] + w[2] * c[2]);
-
+				V3 inv = V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
+				float invDepths = w * inv;
+				float depth = invDepths;
 				if (!ppc->isCloser(p[0], p[1], depth)) continue;
 
-				//cerr << "NONONONO" << endl;
-				V3 baseColor = (color ^ w);
-				V3 pixelPos = (verts ^ w);
+				V3 baseColor = color ^ w;
+				V3 pixelPos = verts ^ w;
+
 				if (pl.inShadow(pixelPos)) {
 					setGuarded(p[0], p[1], (baseColor * pl.ka).getColor());
 					continue;

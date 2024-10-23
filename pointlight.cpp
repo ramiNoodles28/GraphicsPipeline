@@ -34,6 +34,7 @@ int PointLight::selectCam(V3 p) {
 }// figures out which camera a given point should be projected to 
 
 void PointLight::setShadowMaps(TM* tms, int tmsN) {
+	for (auto& ppc : cubeMap) ppc.clearZB();
 	for (int i = 0; i < tmsN; i++) {
 		for (int t = 0; t < tms[i].trisN; t++) {
 			V3 tvs[3];
@@ -117,7 +118,6 @@ vector<M33> PointLight::clipTriToFace(M33 tri, int face) {
 		if (newTri.size() < 3) return {};
 	}
 	if (newTri.size() == 3) {
-		cerr << newTri.size() << endl;
 		return { M33(newTri[0], newTri[1], newTri[2]) };
 	} else if (newTri.size() == 4) {
 		return { M33(newTri[0], newTri[1], newTri[2]),

@@ -34,7 +34,7 @@ void TM::setRectangle(float rw, float rh) {
 	normals[2] = V3(0.f, 0.f, 1.0f);
 	normals[3] = V3(0.f, 0.f, 1.0f);
 	int tri = 0;
-	tris[tri * 3 + 0] = 0; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 2; tri++;
+	tris[tri * 3 + 0] = 1; tris[tri * 3 + 1] = 2; tris[tri * 3 + 2] = 0; tri++;
 	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0; tri++;
 	this->rw = rw;
 	this->rh = rh;
@@ -236,6 +236,12 @@ void TM::lightMeshBW(V3 lv, float ks, float ka) {
 void TM::setTexRes(int w, int h) {
 	rw = w;
 	rh = h;
+}
+
+void TM::scaleTex(float s) {
+	for (int i = 0; i < vertsN; i++) {
+		texCoords[i] = texCoords[i] * s;
+	}
 }
 
 

@@ -32,6 +32,8 @@ public:
 	void setGuarded(int u, int v, unsigned int col);
 	int inBounds(V3 p);
 
+	V3 perspectiveInterp(M33 m, V3 inv, V3 w);
+
 	void rasterizeRectangle(int u0, int v0, int l, int h, unsigned int col);
 	int clipRectangle(int& u0, int& v0, int& rw, int& rh);
 	void rasterizeCircle(V3 center, float radius, unsigned int color);

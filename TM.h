@@ -35,6 +35,8 @@ public:
 	void lightMeshBW(V3 lv, float ks, float ka); // light the mesh from light vector and min lighting 
 	
 	void setTexRes(int w, int h);
+	void scaleTex(float s);
+
 	void setTexture(char* fname);
 	void checkerTexture(int cSize, V3 rgb0, V3 rgb1);
 	void xTexture(V3 rgb0, V3 rgb1);
