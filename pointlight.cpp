@@ -22,6 +22,17 @@ PointLight::PointLight(V3 lp, float ka, float kd, int res) {
 	cubeMap[5].setPose(lp, V3(0.0f, 0.0f, -1.0f), V3(0.0f, -1.0f, 0.0f)); // -z
 }
 
+V3 PointLight::lightPixel(V3 p, V3 pPos, V3 pCol, V3 pNorm) {
+	if (inShadow(pPos)) return (pCol * ka);
+	V3 lv = (lp - pPos).normalize();
+	float dist = (lp - pPos).length();
+	float atten = 1.0f;
+	float diffuse = max(0.0f, pNorm * lv);
+	V3 pixelColor = pCol.lightColor(lv, ka, pNorm);
+	pixelColor = pCol * diffuse * atten + (pCol * ka);
+	return pixelColor;
+}
+
 int PointLight::selectCam(V3 p) {
 	V3 dir = p - lp;
 	dir = dir.normalize();

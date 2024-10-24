@@ -18,8 +18,6 @@ private:
   static void cb_FreeCam(Fl_Button*, void*);
   inline void cb_LightControl_i(Fl_Button*, void*);
   static void cb_LightControl(Fl_Button*, void*);
-  inline void cb_LightType_i(Fl_Button*, void*);
-  static void cb_LightType(Fl_Button*, void*);
 
   inline void cb_TilePlus_i(Fl_Button*, void*);
   static void cb_TilePlus(Fl_Button*, void*);
@@ -33,7 +31,6 @@ public:
   void DBG_cb();
   void FreeCam_cb();
   void LightControl_cb();
-  void LightType_cb();
   void TilePlus_cb();
   void TileMinus_cb();
   void TileMirror_cb();

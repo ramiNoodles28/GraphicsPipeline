@@ -23,12 +23,6 @@ void GUI::cb_LightControl(Fl_Button* o, void* v) {
     ((GUI*)(o->parent()->user_data()))->cb_LightControl_i(o, v);
 }
 
-void GUI::cb_LightType_i(Fl_Button*, void*) {
-    LightType_cb();
-}
-void GUI::cb_LightType(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightType_i(o, v);
-}
 
 void GUI::cb_TilePlus_i(Fl_Button*, void*) {
     TilePlus_cb();
@@ -106,9 +100,6 @@ void GUI::LightControl_cb() {
     scene->LightControl();
 }
 
-void GUI::LightType_cb() {
-    scene->LightType();
-}
 
 void GUI::TilePlus_cb() {
     scene->TilePlus();

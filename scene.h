@@ -31,6 +31,7 @@ public:
 	Texture* tex;
 
 	Scene();
+	void Render();
 	void DBG();
 	void FreeCam();
 	void LightControl();
@@ -40,17 +41,8 @@ public:
 	void TileMirror();
 
 	// old stuff
-	void SM1();
-	void SM2();
-	void SM3();
-	void SM23();
-	void LightType();
 
-	void Render();
-	void loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum);
 
-	void PathCam();
-	void RotatingPoints(); // Generate points rotated about an axis and save to file
 };
 
 extern Scene *scene;

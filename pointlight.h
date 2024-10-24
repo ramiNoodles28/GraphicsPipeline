@@ -18,11 +18,14 @@ public:
 	PointLight() {};
 	PointLight(V3 lp, float ka, float kd, int res);
 
+	V3 lightPixel(V3 p, V3 pPos, V3 pCol, V3 pNorm);
+
 	int selectCam(V3 p); // figures out which camera a given point should be projected to 
 	void setShadowMaps(TM *tms, int tmsN); // set up z buffers for cameras to determine what pixels are in shadow
 	void clipAndProjectTris(M33 tvs); // check if tri verts project to same cube face
 	void updateZB(M33 tvs, int face); // update the z buffer of the given face
 	bool inShadow(V3 p); // returns whether point is in shadow
+	
 
 	vector<M33> clipTrisToFaces(M33 tri, vector<int> faces);
 	vector<M33> clipTriToFace(M33 tri, int face);
