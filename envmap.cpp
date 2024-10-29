@@ -51,8 +51,8 @@ unsigned int EnvMap::lookup(V3 ray) {
         v = ray[1] / fabs(ray[2]);
         break;
     }
-	int texU = (u * 0.5f + 0.5f) * (size - 1);
-	int texV = (v * 0.5f + 0.5f) * (size - 1);
-	return textures[face].get(texU, texV);
+	float texU = (u * 0.5f + 0.5f) * (size - 1.0f);
+	float texV = (v * 0.5f + 0.5f) * (size - 1.0f);
+	return textures[face].getBL(texU, texV);
 } // returns color of pixel hit by eye ray
 

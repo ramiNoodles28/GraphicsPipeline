@@ -18,12 +18,31 @@ unsigned int Texture::get(int u, int v) {
 	return pix[(h - 1 - v) * w + u];
 }
 
+unsigned int Texture::getBL(float u, float v) {
+	if (u < 0 || u >= w || v < 0 || v >= h)
+		return pix[0];
+	int u0 = (int) (u - 0.5f);
+	int v0 = (int) (v - 0.5f);
+	float du = u - (0.5f + (float)u0);
+	float dv = v - (0.5f + (float)v0);
+	V3 T00, T01, T10, T11;
+	T00.setFromColor(get(u0, v0));
+	T01.setFromColor(get(u0, v0 + 1));
+	T10.setFromColor(get(u0 + 1, v0));
+	T11.setFromColor(get(u0 + 1, v0 + 1));
+	V3 retColor =	T00 * ((1.0f - du) * (1.0f - dv)) + 
+					T01 * ((1.0f - du) * dv) + 
+					T10 * (du * (1.0f - dv)) + 
+					T11 * (du * dv);
+	return retColor.getColor();
+}
+
+
 void Texture::set(int u, int v, V3 color) {
 	pix[(h - 1 - v) * w + u] = color.getColor();
 }
 
 V3 Texture::getTex(V3 texCoord) {
-	// TODO get mirroring to work with tiling
 	float s = texCoord[0];
 	float sT = (float)((int)texCoord[0]);
 	float t = texCoord[1];

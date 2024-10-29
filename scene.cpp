@@ -18,8 +18,8 @@ using namespace std;
 Scene::Scene() {
 	int u0 = 20;
 	int v0 = 40;
-	int h = 480;
-	int w = 640;
+	int h = 720;
+	int w = 1280;
 	fb = new FrameBuffer(u0, v0, w, h);
 	fb->position(u0, v0);
 	fb->label("SW Framebuffer");
@@ -52,9 +52,7 @@ Scene::Scene() {
 	texType = 0;
 	tileNum = 2;
 	tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
-	ppc->translate(V3(0, 65, 0));
-	ppc->tilt(-25.0f);
-	ppc->setPose(V3(0, 0, 0), V3(0, 0, -1), V3(0, 1, 0));
+	ppc->translate(V3(0, 0, 150));
 }
 
 void Scene::Render() {
@@ -64,11 +62,12 @@ void Scene::Render() {
 
 	pLight[0] = PointLight(lp, ka, kd, 512);
 	pLight[0].setShadowMaps(tms, tmsN);
+	fb->setBackgroundEnv(env, ppc);
 	for (int tmi = 0; tmi < tmsN; tmi++) {
 		tms[tmi].resetAllColors();
 		
 		//fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
-		//fb->setBackgroundEnv(env, ppc);
+		
 		fb->renderTrisReflective(tms[tmi], ppc, env);
 		//fb->renderWF(tms[tmi], ppc);
 		
@@ -145,10 +144,11 @@ void Scene::FreeCam() {
 	*/
 	
 	tms[0].loadBin("geometry/teapot57K.bin");
-	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
+	tms[0].translate(V3(0.0f, 0.0f, 0.0f) - tms[0].centroid());
 	//tms[1].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
-	env = new EnvMap("environments/uffizi_cross.tiff");
+	//env = new EnvMap("environments/uffizi_cross.tiff");
 	//env = new EnvMap("environments/testEnv.tiff");
+	env = new EnvMap("environments/room.tiff");	
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
@@ -162,7 +162,21 @@ void Scene::FreeCam() {
 }
 
 void Scene::LightControl() {
-	cerr << "INFO: pressed Light Control button on GUI" << endl;
+	fb->clear();
+	V3 newC = V3(0, 0, 150);
+	V3 vd = V3(0, 0, -1);
+	V3 upD = V3(0, 1, 0);
+	ppc->setPose(newC, vd, upD);
+	while (true) {
+		newC = ppc->C.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 1.0f);
+		vd = (V3(0, 0, 0) - newC).normalize();
+		upD = (ppc->b * -1.0f).normalize();
+		ppc->setPose(newC, vd, upD);
+		Render();
+		fb->redraw();
+		Fl::check();
+	}
+	/*cerr << "INFO: pressed Light Control button on GUI" << endl;
 	cerr << "Point Light Controls: "
 		"\nI - Forward "
 		"\nK - Backward "
@@ -178,7 +192,7 @@ void Scene::LightControl() {
 		Render();
 		fb->redraw();
 		Fl::check();
-	}
+	}*/
 }
 
 void Scene::TilePlus() {
@@ -196,42 +210,31 @@ void Scene::TileMirror() {
 }
 
 void Scene::DBG() {
-	//tms[0].loadBin("geometry/teapot57K.bin");
-	fb->clear();
-	tms[0].translate(V3(0, 0, 0) - tms[0].centroid());
-	V3 newC = V3(0, 0, 300);
-	V3 vd = V3(0, 0, -1);
-	//ppc->setPose(newC, vd, V3(0, 1, 0));
+
 	
-	while (true) {
-		newC = ppc->C.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 0.2f);
-		vd = tms[0].centroid() - newC;
-		ppc->setPose(newC, vd, V3(0, 1, 0));
-		Render();
-		fb->redraw();
-		Fl::check();
-	}
-	/*
-	texType = (texType > 3) ? 0 : texType + 1;
+	texType = (texType > 1) ? 0 : texType + 1;
 	switch (texType) {
 	case 0:
-		tex->w = 50; tex->h = 50;
-		tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
+		env = new EnvMap("environments/room.tiff");
+		//tex->w = 50; tex->h = 50;
+		//tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
 		break;
 	case 1:
-		tex->w = 50; tex->h = 50;
-		tex->setXTex(V3(.9f, .9f, .9f), V3(0, 0, 0));
+		env = new EnvMap("environments/testEnv.tiff");
+		//tex->w = 50; tex->h = 50;
+		//tex->setXTex(V3(.9f, .9f, .9f), V3(0, 0, 0));
 		break;
-	case 2:
-		tex->loadTiff("textures/brick.tif");
-		break;
-	case 3:
-		tex->loadTiff("textures/diamond_ore.tif");
-		break;
+	//case 2:
+		//tex->loadTiff("textures/brick.tif");
+		//break;
+	//case 3:
+		//tex->loadTiff("textures/diamond_ore.tif");
+		//break;
 	default:
-		tex->loadTiff("textures/light_gray_glazed_terracotta.tif");
+		env = new EnvMap("environments/uffizi_cross.tiff");
+		//tex->loadTiff("textures/light_gray_glazed_terracotta.tif");
 	}
-	*/
+	
 }
 
 /////////////////// funny stuff

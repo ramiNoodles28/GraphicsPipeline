@@ -9,8 +9,6 @@ public:
 	Texture cross; // env map image as a cross
 	float size; //  side length of cube map
 	Texture textures[6]; // environment textures
-	PPC cams[6]; // environment cameras
-
 
 	EnvMap() {};
 	EnvMap(char* fname);

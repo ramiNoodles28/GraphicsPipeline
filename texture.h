@@ -10,6 +10,7 @@ public:
 	Texture() {};
 	Texture(int w, int h);
 	unsigned int get(int u, int v);
+	unsigned int getBL(float u, float v);
 	
 	void set(int u, int v, V3 color);
 	V3 getTex(V3 texCoord);
