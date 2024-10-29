@@ -509,7 +509,18 @@ void FrameBuffer::rasterizeTrisReflective(V3 a, V3 b, V3 c,
 				V3 pixelPos = verts ^ w;
 				V3 pixelNormal = norms ^ w;
 
-				setGuarded(p[0], p[1], baseColor.getColor());
+				V3 eyeRay = ppc->C - pixelPos;
+				V3 refl = pixelNormal.reflectAboutThisNorm(eyeRay);
+				/*
+				int visStep = 50;
+				if ((int)p[0] % visStep == 0 && (int)p[1] % visStep==0) {
+					V3 R = pixelPos + refl.normalize() * 5.0f;
+					render3DSegment(pixelPos, R, V3(0, 0, 0), V3(1, 0, 0), ppc);
+					R = pixelPos + pixelNormal * 5.0f;
+					render3DSegment(pixelPos, R, V3(0, 0, 0), V3(0, 0, 1), ppc);
+				}
+				*/
+				setGuarded(p[0], p[1], env->lookup(refl));
 			}
 		}
 	}
@@ -550,7 +561,7 @@ void FrameBuffer::setBackgroundEnv(EnvMap* env, PPC* ppc) {
 	for (int v = 0; v < h; v++) {
 		for (int u = 0; u < w; u++) {
 			V3 eyeRay = ppc->getRay(u, v);
-			set(u, v, env->lookup(eyeRay).getColor());
+			set(u, v, env->lookup(eyeRay));
 		}
 	}
 	ppc->clearZB();

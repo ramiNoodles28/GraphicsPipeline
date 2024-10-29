@@ -15,5 +15,5 @@ public:
 	EnvMap() {};
 	EnvMap(char* fname);
 	int selectFace(V3 ray); // figures out which face of the cubemap the ray is pointing to
-	V3 lookup(V3 ray); // returns color of pixel hit by eye ray
+	unsigned int lookup(V3 ray); // returns color of pixel hit by eye ray
 };

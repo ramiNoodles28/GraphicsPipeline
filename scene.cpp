@@ -54,6 +54,7 @@ Scene::Scene() {
 	tex->setChecker(5, V3(.9f, .9f, .9f), V3(0, 0, 0));
 	ppc->translate(V3(0, 65, 0));
 	ppc->tilt(-25.0f);
+	ppc->setPose(V3(0, 0, 0), V3(0, 0, -1), V3(0, 1, 0));
 }
 
 void Scene::Render() {
@@ -67,7 +68,7 @@ void Scene::Render() {
 		tms[tmi].resetAllColors();
 		
 		//fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
-		fb->setBackgroundEnv(env, ppc);
+		//fb->setBackgroundEnv(env, ppc);
 		fb->renderTrisReflective(tms[tmi], ppc, env);
 		//fb->renderWF(tms[tmi], ppc);
 		
@@ -143,10 +144,11 @@ void Scene::FreeCam() {
 	} 
 	*/
 	
-	tms[0].loadBin("geometry/teapot1K.bin");
+	tms[0].loadBin("geometry/teapot57K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-	tms[1].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
+	//tms[1].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
 	env = new EnvMap("environments/uffizi_cross.tiff");
+	//env = new EnvMap("environments/testEnv.tiff");
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
@@ -194,6 +196,22 @@ void Scene::TileMirror() {
 }
 
 void Scene::DBG() {
+	//tms[0].loadBin("geometry/teapot57K.bin");
+	fb->clear();
+	tms[0].translate(V3(0, 0, 0) - tms[0].centroid());
+	V3 newC = V3(0, 0, 300);
+	V3 vd = V3(0, 0, -1);
+	//ppc->setPose(newC, vd, V3(0, 1, 0));
+	
+	while (true) {
+		newC = ppc->C.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 0.2f);
+		vd = tms[0].centroid() - newC;
+		ppc->setPose(newC, vd, V3(0, 1, 0));
+		Render();
+		fb->redraw();
+		Fl::check();
+	}
+	/*
 	texType = (texType > 3) ? 0 : texType + 1;
 	switch (texType) {
 	case 0:
@@ -213,6 +231,7 @@ void Scene::DBG() {
 	default:
 		tex->loadTiff("textures/light_gray_glazed_terracotta.tif");
 	}
+	*/
 }
 
 /////////////////// funny stuff

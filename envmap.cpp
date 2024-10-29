@@ -9,7 +9,7 @@ EnvMap::EnvMap(char* fname) {
 	textures[2] = cross.getRange(V3(size, size), size); // +z (front)
 	textures[3] = cross.getRange(V3(size * 2.0f, size), size); // -x (right)
 	textures[4] = cross.getRange(V3(size, size * 2.0f), size); // -y (bottom)
-	textures[5] = cross.getRange(V3(size, size * 2.0f), size); // -z (back)
+	textures[5] = cross.getRange(V3(size, size * 3.0f), size); // -z (back)
 }
 
 int EnvMap::selectFace(V3 ray) {
@@ -22,9 +22,37 @@ int EnvMap::selectFace(V3 ray) {
 } // figures out which face of the cubemap the ray is pointing to
 
 
-V3 EnvMap::lookup(V3 ray) {
+unsigned int EnvMap::lookup(V3 ray) {
 	int face = selectFace(ray);
-
-	return V3(1, 0, 0);
+    float u, v;
+    switch (face) {
+    case 0: // +X face
+        u = ray[2] / fabs(ray[0]);
+        v = -ray[1] / fabs(ray[0]);
+        break;
+    case 3: // -X face
+        u = -ray[2] / fabs(ray[0]);
+        v = -ray[1] / fabs(ray[0]);
+        break;
+    case 1: // +Y face
+        u = -ray[0] / fabs(ray[1]);
+        v = ray[2] / fabs(ray[1]);
+        break;
+    case 4: // -Y face
+        u = -ray[0] / fabs(ray[1]);
+        v = -ray[2] / fabs(ray[1]);
+        break;
+    case 2: // +Z face
+        u = -ray[0] / fabs(ray[2]);
+        v = -ray[1] / fabs(ray[2]);
+        break;
+    case 5: // -Z face
+        u = -ray[0] / fabs(ray[2]);
+        v = ray[1] / fabs(ray[2]);
+        break;
+    }
+	int texU = (u * 0.5f + 0.5f) * (size - 1);
+	int texV = (v * 0.5f + 0.5f) * (size - 1);
+	return textures[face].get(texU, texV);
 } // returns color of pixel hit by eye ray
 
