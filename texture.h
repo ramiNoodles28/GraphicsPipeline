@@ -10,8 +10,10 @@ public:
 	Texture() {};
 	Texture(int w, int h);
 	unsigned int get(int u, int v);
+	
 	void set(int u, int v, V3 color);
 	V3 getTex(V3 texCoord);
+	Texture getRange(V3 min, float size);
 
 	void loadTiff(char* fname);
 	void setChecker(int cSize, V3 rgb0, V3 rgb1);

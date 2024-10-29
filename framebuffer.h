@@ -7,6 +7,7 @@
 #include "V3.h"
 #include "M33.h"
 #include "pointlight.h"
+#include "envmap.h"
 #include "TM.h"
 //class PPC;
 
@@ -45,15 +46,21 @@ public:
 	void rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 		M33 verts, M33 color, M33 norms, PPC* ppc, PointLight pl, 
 		M33 texCoords = M33(), Texture* tex = nullptr);  // point lit per pixel raster
+	void rasterizeTrisReflective(V3 a, V3 b, V3 c,
+		M33 verts, M33 color, M33 norms, PPC* ppc, EnvMap* env); // unlit per pixel rasterization of reflective surface
 
 	void renderWF(TM tm, PPC* ppc); // renders wireframe of mesh
 	void renderTris(TM tm, PPC* ppc); // renders filled in tri mesh
 	void renderTrisDirLight(TM tm, PPC* ppc, V3 lv, float ka); // render mesh with directional light
 	void renderTrisPointLight(TM tm, PPC* ppc, PointLight pl); // render mesh with point light
+	void renderTrisReflective(TM tm, PPC* ppc, EnvMap *env); // render mesh with reflective surface
+
 
 	void rasterize2DSegment(V3 p0, V3 p1, unsigned int color, PPC* ppc);
 	void rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC* ppc);
 	void render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC *ppc);
 	void renderPoint(V3 p, float r, V3 c, PPC* ppc);
+
+	void setBackgroundEnv(EnvMap* env, PPC* ppc); // set background of scene to environment
 
 };

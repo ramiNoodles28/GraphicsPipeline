@@ -459,6 +459,7 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 				} else baseColor = color ^ w;
 				V3 pixelPos = verts ^ w;
 				V3 pixelNormal = norms ^ w;
+
 				V3 pixelColor = pl.lightPixel(p, pixelPos, baseColor, pixelNormal);
 
 				setGuarded(p[0], p[1], pixelColor.getColor());
@@ -466,6 +467,54 @@ void FrameBuffer::rasterizeTrisPointLight(V3 a, V3 b, V3 c,
 		}
 	}
 }
+
+void FrameBuffer::renderTrisReflective(TM tm, PPC* ppc, EnvMap *env) {
+	if (!tm.onFlag)
+		return;
+	// go over all triangles
+	for (int tri = 0; tri < tm.trisN; tri++) {
+		V3 tvs[3];
+		V3 pvs[3];
+		unsigned int vinds[3];
+		for (int vi = 0; vi < 3; vi++) {
+			vinds[vi] = tm.tris[3 * tri + vi];
+			tvs[vi] = tm.verts[vinds[vi]];
+			ppc->project(tvs[vi], pvs[vi]);
+		}
+		rasterizeTrisReflective(pvs[0], pvs[1], pvs[2],
+			M33(tvs[0], tvs[1], tvs[2]),
+			M33(tm.colors[vinds[0]], tm.colors[vinds[1]], tm.colors[vinds[2]]),
+			M33(tm.normals[vinds[0]], tm.normals[vinds[1]], tm.normals[vinds[2]]),
+			ppc, env);
+	}
+} // render mesh with point light
+
+void FrameBuffer::rasterizeTrisReflective(V3 a, V3 b, V3 c,
+	M33 verts, M33 color, M33 norms, PPC* ppc, EnvMap *env) {
+	V3 p(0, 0);
+	V3 mins = triMins(a, b, c);
+	V3 maxes = triMaxes(a, b, c);
+	float triArea = edgeFunction(a, b, c);
+	for (p[1] = mins[1]; p[1] <= maxes[1]; p[1]++) {
+		for (p[0] = mins[0]; p[0] <= maxes[0]; p[0]++) {
+			if (!inBounds(p)) continue;
+			V3 efs = edgeFunctions(a, b, c, p);
+			if (efs[0] >= 0 && efs[1] >= 0 && efs[2] >= 0) {
+				V3 w = efs / triArea;
+				V3 inv = V3(1.0f / a[2], 1.0f / b[2], 1.0f / c[2]);
+				float invDepths = w * inv;
+				float depth = invDepths;
+				if (!ppc->isCloser(p[0], p[1], depth)) continue;
+				V3 baseColor = color ^ w;
+				V3 pixelPos = verts ^ w;
+				V3 pixelNormal = norms ^ w;
+
+				setGuarded(p[0], p[1], baseColor.getColor());
+			}
+		}
+	}
+} // unlit per pixel rasterization of reflective surface
+
 
 int FrameBuffer::inBounds(V3 p) {
 	return !(p[0] < 0 || p[0] > w - 1 || p[1] < 0 || p[1] > h - 1);
@@ -497,6 +546,15 @@ void FrameBuffer::renderPoint(V3 p, float r, V3 c, PPC *ppc) {
 	rasterizeCircle(pp, r, c.getColor());
 }
 
+void FrameBuffer::setBackgroundEnv(EnvMap* env, PPC* ppc) {
+	for (int v = 0; v < h; v++) {
+		for (int u = 0; u < w; u++) {
+			V3 eyeRay = ppc->getRay(u, v);
+			set(u, v, env->lookup(eyeRay).getColor());
+		}
+	}
+	ppc->clearZB();
+} // set background of scene to environment
 
 
 

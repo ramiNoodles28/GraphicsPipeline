@@ -30,6 +30,8 @@ public:
 	int tileNum;
 	Texture* tex;
 
+	EnvMap* env;
+
 	Scene();
 	void Render();
 	void DBG();

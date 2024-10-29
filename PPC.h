@@ -24,9 +24,10 @@ public:
 	void interpCam(PPC start, PPC end, float interval, float (*interpFunc)(float)); // interpolate camera between start and end camera given easing function
 	void interpCam(PPC start, PPC end, float t); // interpolate camera between start and end camera linearly
 
+
 	V3 getViewDirection(); // get view direction vector
 	float getFocalLength(); // get focal length
-	//void renderWF(FrameBuffer *fb, float visf, PPC *visppc); // render wireframe of camera THIS CAUSES PROBLEMS
+	V3 getRay(int u, int v); // get ray coming from pixel
 
 	void clearZB(); // clear the z buffer
 	int isFarther(int u, int v, float z); // check if current pixel z is farther than z buffer

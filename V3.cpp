@@ -139,6 +139,14 @@ V3 V3::rotateDir(V3 dir, float angle) {
 	return ret;
 } // Rotate vector about direction
 
+V3 V3::reflectAboutThisNorm(V3 ray) {
+	V3 &n = *this;
+	V3 e = ray;
+	V3 en = n * (e * n);
+	V3 r = en * 2.0f - e;
+	return r;
+} // assumes this is a normal, and reflects input about this
+
 
 V3 V3::triMins(V3 a, V3 b, V3 c) {
 	return V3(floor(min(a[0], min(b[0], c[0]))),

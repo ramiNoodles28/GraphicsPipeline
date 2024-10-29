@@ -88,32 +88,6 @@ void PPC::interpCam(PPC start, PPC end, float t) {
 	C = start.C + (end.C - start.C) * t;
 } // interpolate camera between start and end camera linearly
 
-/*
-void PPC::renderWF(FrameBuffer *fb, float visf, PPC *visppc) {
-	float scf = visf / getFocalLength();
-	V3 bv(0.0f, 0.0f, 0.0f);
-	fb->render3DSegment(
-		C, 
-		C + c*scf, bv, bv, visppc);
-	fb->render3DSegment(
-		C + c*scf,
-		C + (c + a * (float)w)*scf, 
-		bv, bv, visppc);
-	fb->render3DSegment(
-		C + (c + a * (float)w)*scf,
-		C + (c + a * (float)w + b * (float) h)*scf, 
-		bv, bv, visppc);
-	fb->render3DSegment(
-		C + (c + a * (float)w + b * (float)h)*scf,
-		C + (c + b * (float)h)*scf,
-		bv, bv, visppc);
-	fb->render3DSegment(
-		C + (c + b * (float)h)*scf,
-		C + c*scf,
-		bv, bv, visppc);
-} // render wireframe of camera
-*/
-
 V3 PPC::getViewDirection() {
 	return (a ^ b).normalize();
 } // get view direction vector
@@ -121,6 +95,12 @@ V3 PPC::getViewDirection() {
 float PPC::getFocalLength() {
 	return c * getViewDirection();
 }
+
+V3 PPC::getRay(int u, int v) {
+	V3 ret = c + a * (.5f + (float)u) + b * (.5f + (float)v);
+	ret = ret.normalize();
+	return ret;
+} // get ray coming from pixel
 
 void PPC::clearZB() {
 	for (int uv = 0; uv < w * h; uv++)

@@ -29,6 +29,7 @@ public:
 	V3 normalize(); // Normalize Vector
 	V3 rotateAboutAxis(V3 aO, V3 aD, float theta); // Rotate vector (point) about axis
 	V3 rotateDir(V3 dir, float angle); // Rotate vector about direction
+	V3 reflectAboutThisNorm(V3 ray); // assumes this is a normal, and reflects input about this
 
 	V3 triMins(V3 a, V3 b, V3 c); // gets tri min bounds
 	V3 triMaxes(V3 a, V3 b, V3 c); // gets tri max bounds

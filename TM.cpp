@@ -244,7 +244,6 @@ void TM::scaleTex(float s) {
 	}
 }
 
-
 void TM::setTexture(char* fname) {
 	Texture* temp = new Texture(rw, rh);
 	temp->loadTiff(fname);

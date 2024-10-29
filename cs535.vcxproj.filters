@@ -12,6 +12,7 @@
     <ClCompile Include="shaders.cpp" />
     <ClCompile Include="pointlight.cpp" />
     <ClCompile Include="texture.cpp" />
+    <ClCompile Include="envmap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framebuffer.h" />
@@ -25,5 +26,6 @@
     <ClInclude Include="shaders.h" />
     <ClInclude Include="pointlight.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="envmap.h" />
   </ItemGroup>
 </Project>

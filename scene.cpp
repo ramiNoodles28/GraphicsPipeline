@@ -35,6 +35,7 @@ Scene::Scene() {
 	tmsN = 6;
 	tms = new TM[tmsN];
 
+
 	lNum = 2;
 	pLight = new PointLight[lNum];
 
@@ -66,7 +67,8 @@ void Scene::Render() {
 		tms[tmi].resetAllColors();
 		
 		//fb->renderPoint(pLight[0].lp, 3.5, V3(0, 0, 0), ppc);
-		fb->renderTrisPointLight(tms[tmi], ppc, pLight[0]);
+		fb->setBackgroundEnv(env, ppc);
+		fb->renderTrisReflective(tms[tmi], ppc, env);
 		//fb->renderWF(tms[tmi], ppc);
 		
 	}
@@ -88,7 +90,7 @@ void Scene::FreeCam() {
 			"\nLeft/Right Arrow - Pan"
 			"\nScroll Wheel - Zoom" << endl;
 	fb->clear();
-	
+	/*
 	V3 center(0, 0, -150.0f);
 	{
 		float rw = 50.0f;
@@ -139,24 +141,22 @@ void Scene::FreeCam() {
 		Fl::check();
 		t += 0.01f;
 	} 
-
-	/*
-	tms[0].loadBin("geometry/teapot57K.bin");
+	*/
+	
+	tms[0].loadBin("geometry/teapot1K.bin");
 	tms[0].translate(V3(0.0f, 0.0f, -150.0f) - tms[0].centroid());
-	tms[1].loadBin("geometry/teapot1k.bin");
-	tms[1].translate(V3(80, 0.0f, -280.0f) - tms[1].centroid());
-	tms[2].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
+	tms[1].setGroundPlane(V3(0, -30, -150.0f), V3(0.5f, 0.5f, 0.5f), 100.0f);
+	env = new EnvMap("environments/uffizi_cross.tiff");
 	//Render();
 	fb->addCam(ppc);
 	fb->s = 2;
 	float t = 0.0f;
 	while (true) {
-		lp = lp.rotateAboutAxis(tms[0].centroid(), V3(0, 1, 0), 4.0f);
 		Render();
 		fb->redraw();
 		Fl::check();
 		t += 0.1f;
-	} */
+	} 
 }
 
 void Scene::LightControl() {

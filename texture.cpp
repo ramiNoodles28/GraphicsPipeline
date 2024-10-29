@@ -41,6 +41,18 @@ V3 Texture::getTex(V3 texCoord) {
 	return ret;
 }
 
+Texture Texture::getRange(V3 min, float size) {
+	Texture t(size, size);
+	V3 color(0,0,0);
+	for (int x = 0; x < size; x++) {
+		for (int y = 0; y < size; y++) {
+			color.setFromColor(get(x + min[0], y + min[1]));
+			t.set(x, y, color);
+		}
+	}
+	return t;
+}
+
 
 /// Set Texture types
 
