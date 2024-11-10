@@ -2,7 +2,7 @@
 #include "framebuffer.h"
 #include "math.h"
 #include <iostream>
-//#include "scene.h"
+#include "scene.h"
 
 #include <tiffio.h>
 
@@ -12,6 +12,7 @@ FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	Fl_Gl_Window(u0, v0, _w, _h, 0) {
 	w = _w;
 	h = _h;
+	isHW = 0;
 	pix = new unsigned int[w*h];
 	zb = new float[w * h];
 	cam = NULL;
@@ -24,7 +25,10 @@ void FrameBuffer::addCam(PPC *c) {
 }
 
 void FrameBuffer::draw() {
-	glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	if (!isHW) glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	else {
+		scene->RenderHW();
+	}
 }
 
 int FrameBuffer::handle(int event) {

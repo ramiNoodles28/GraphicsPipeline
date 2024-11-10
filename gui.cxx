@@ -52,17 +52,23 @@ GUI::GUI() {
     int h = 30; int w = 80; int p = 15;
   { uiw = new Fl_Double_Window(300, 250, "GUI");
     uiw->user_data((void*)(this));
-    { Fl_Button* o = new Fl_Button(p, 2*(p + h) + p, w, h, "Cycle Env");
-      o->selection_color(FL_DARK_RED);
+	{ Fl_Button* o = new Fl_Button(p, p, 2*w, h, "Free Camera");
+	      o->callback((Fl_Callback*)cb_FreeCam);
+	} // Fl_Return_Button* o
+    { Fl_Button* o = new Fl_Button(p, 1*(p + h) + p, 2*w, h, "Cycle Render");
       o->callback((Fl_Callback*)cb_DBG);
     } // Fl_Button* o 
-    { Fl_Button* o = new Fl_Button(p, p, w, h, "Free Cam");
-      o->callback((Fl_Callback*)cb_FreeCam);
-    } // Fl_Return_Button* o
-    { Fl_Button* o = new Fl_Button(p, (p + h) + p, w, h, "Revolve");
+    { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, 2 * w, h, "Save Camera Pose");
+      o->callback((Fl_Callback*)cb_DBG);
+    } // Fl_Button* o 
+    { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, 2 * w, h, "Load Camera Path");
+  	  o->callback((Fl_Callback*)cb_DBG);
+    } // Fl_Button* o 
+	/*
+    	{ Fl_Button* o = new Fl_Button(p, (p + h) + p, w, h, "Revolve");
   	  o->callback((Fl_Callback*)cb_LightControl);
     }
-    /*
+    
         // lighting buttons
     { Fl_Button* o = new Fl_Button(2 * p + w, p, 2 * w, h, "Tile +");
   	  o->callback((Fl_Callback*)cb_TilePlus);

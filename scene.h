@@ -12,11 +12,13 @@ class Scene {
 public:
 
 	GUI *gui;
-	FrameBuffer *fb;
+	FrameBuffer *fb, *hwfb;
 	PPC *ppc;
 	TM *tms;
 	int tmsN;
+	int renderMode;
 
+	float fps;
 	int lightingMode;
 	int lightType;
 	float ka;
@@ -34,6 +36,8 @@ public:
 
 	Scene();
 	void Render();
+	void RenderHW();
+	void renderText(float x, float y, const char* text);
 	void DBG();
 	void FreeCam();
 	void LightControl();

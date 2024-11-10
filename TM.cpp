@@ -1,5 +1,7 @@
 #include "TM.h"
 
+
+
 using namespace std;
 
 #include <iostream>
@@ -24,7 +26,7 @@ void TM::setRectangle(float rw, float rh) {
 	verts[2] = V3(+rw / 2.0f, -rh / 2.0f, 0.0f);
 	verts[3] = V3(+rw / 2.0f, +rh / 2.0f, 0.0f);
 
-	texCoords[0] = V3(0.f, 0.f, 0.0f);
+	texCoords[0] = V3(0.f, 1.f, 0.0f);
 	texCoords[1] = V3(0.f, 1.f, 0.0f);
 	texCoords[2] = V3(1.f, 1.f, 0.0f);
 	texCoords[3] = V3(1.f, 0.f, 0.0f);
@@ -260,5 +262,57 @@ void TM::xTexture(V3 rgb0, V3 rgb1) {
 	Texture* temp = new Texture(rw, rh);
 	temp->setXTex(rgb0, rgb1);
 	tex = temp;
+}
+
+void TM::loadTexture() {
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+		tex->w, tex->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex->pix);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+void TM::renderHW(int renderMode) {
+
+	switch (renderMode) {
+	case 0: 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
+	case 1:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+	default:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, texID);
+	}
+	
+	
+	glEnableClientState(GL_VERTEX_ARRAY); // vertices will be provided in an array
+	glVertexPointer(3, GL_FLOAT, 0, (float*)verts); // here are the vertices
+
+	
+
+	if (renderMode == 2) {
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY); // Enable texture coordinate array
+		glTexCoordPointer(2, GL_FLOAT, 0, (float*)texCoords); // Assuming texCoords contains your texture coordinates
+	} else {
+		glEnableClientState(GL_COLOR_ARRAY); // vertex colors will be provided in an array
+		glColorPointer(3, GL_FLOAT, 0, (float*)colors);
+	}
+
+	// draw the triangle mesh
+	glDrawElements(GL_TRIANGLES, 3 * trisN, GL_UNSIGNED_INT, tris);
+
+	if (renderMode == 2) {
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY); // Disable texture coordinate array
+		glDisable(GL_TEXTURE_2D); // Disable texturing
+	} else glDisableClientState(GL_COLOR_ARRAY);
+
+	// done using array of vertices
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 

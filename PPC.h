@@ -14,6 +14,10 @@ public:
 	PPC() {}
 	PPC(float hfov, int w, int h); // Constructor from field of view, and w/h of image frame
 
+	void setIntrinsicsHW(); // set camera intrinsics for hardware rendering
+	void setExtrinsicsHW(); // set camera extrinsics for hardware rendering
+	void setViewHW(); // sets up camera for hardware rendering
+
 	int project(V3 P, V3& Q); // project point onto image plane
 	void translate(V3 tv); // translate camera
 	void setPose(V3 newC, V3 newVD, V3 newUpG); // set camera to new pose

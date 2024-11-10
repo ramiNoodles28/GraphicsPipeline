@@ -1,5 +1,8 @@
 #pragma once
 
+#include <FL/Fl.H>
+#include <FL/Fl_Gl_Window.H>
+#include <GL/glut.h>
 #include "V3.h"
 #include "texture.h"
 
@@ -11,6 +14,7 @@ public:
 	unsigned int *tris;
 	int trisN;
 	Texture *tex;
+	GLuint texID;
 	int rw, rh; //texture map resolution
 
 	TM(): onFlag(1), texFlag(0), verts(0), vertsN(0), tris(0), trisN(0),
@@ -40,4 +44,9 @@ public:
 	void setTexture(char* fname);
 	void checkerTexture(int cSize, V3 rgb0, V3 rgb1);
 	void xTexture(V3 rgb0, V3 rgb1);
+
+	void loadTexture();
+	void renderHW(int renderMode);
+	
+
 };

@@ -1,5 +1,4 @@
 #pragma once
-
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
 #include <GL/glut.h>
@@ -17,6 +16,7 @@ public:
 	int w, h; // width and height of frame
 	float* zb; // z buffer
 	int s; // scale of camera movement
+	int isHW; // if fb is rendered using hardware
 	PPC *cam;
 	V3 lp;
 
@@ -63,4 +63,5 @@ public:
 
 	void setBackgroundEnv(EnvMap* env, PPC* ppc); // set background of scene to environment
 
+	
 };

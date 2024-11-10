@@ -129,6 +129,11 @@ V3 V3::rotateAboutAxis(V3 aO, V3 aD, float theta) {
 	return ret;
 } // Rotate vector (point) about axis
 
+V3 V3::rotateAboutOrigin(V3 aD, float theta) {
+	return rotateAboutAxis(V3(0.0f, 0.0f, 0.0f), aD, theta);
+} // rotate vector about axis that crosses origin
+
+
 V3 V3::rotateDir(V3 dir, float angle) {
 	float rad = PI * angle / 180;
 	V3& v = *this;

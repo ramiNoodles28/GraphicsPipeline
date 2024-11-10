@@ -6,8 +6,6 @@
 #include <fstream>
 #include <strstream>
 
-
-
 PPC::PPC(float hfov, int _w, int _h) {
 	w = _w;
 	h = _h;
@@ -19,6 +17,34 @@ PPC::PPC(float hfov, int _w, int _h) {
 	float f = (float)w / (2.0f * tanf(hfovr/2.0f));
 	c = V3(-(float)w/2.0f, (float)h/2.0f, -f);
 } // Constructor from field of view, and w/h of image frame
+
+void PPC::setViewHW() {
+	setIntrinsicsHW();
+	setExtrinsicsHW();
+} // sets up camera for hardware rendering
+
+void PPC::setIntrinsicsHW() {
+	float nearZ = 0.25f; // minimum distance from camera to render
+	float farZ = 1000.0f; // max dist from cam to render
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	float f = getFocalLength();
+	float scaleF = nearZ / f;
+	glFrustum(	-(float)w / 2.0f * scaleF, +(float)w / 2.0f * scaleF,
+				-(float)h / 2.0f * scaleF, +(float)h / 2.0f * scaleF,
+				nearZ, farZ);
+} // set camera intrinsics for hardware rendering
+
+void PPC::setExtrinsicsHW() {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	V3 LAP = C + (getViewDirection() * 100.0f);
+	gluLookAt(	C[0], C[1], C[2],
+				LAP[0], LAP[1], LAP[2],
+				-b[0], -b[1], -b[2]);
+} // set camera extrinsics for hardware rendering
+
 
 int PPC::project(V3 P, V3& Q) {
 	M33 cam; 

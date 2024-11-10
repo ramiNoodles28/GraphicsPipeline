@@ -28,6 +28,7 @@ public:
 	float length(); // Vector length
 	V3 normalize(); // Normalize Vector
 	V3 rotateAboutAxis(V3 aO, V3 aD, float theta); // Rotate vector (point) about axis
+	V3 rotateAboutOrigin(V3 aD, float theta); // rotate vector about axis that crosses origin
 	V3 rotateDir(V3 dir, float angle); // Rotate vector about direction
 	V3 reflectAboutThisNorm(V3 ray); // assumes this is a normal, and reflects input about this
 
