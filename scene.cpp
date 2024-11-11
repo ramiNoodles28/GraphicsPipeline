@@ -302,22 +302,39 @@ void Scene::LightControl() {
 }
 
 void Scene::TilePlus() {
+	ppc->saveToTxt("camPaths.txt");
+	/*
 	for (int i = 0; i < 6; i++) {
 		tms[i].scaleTex(0.5f);
-	}
+	}*/
 }
 void Scene::TileMinus() {
+	int camNum = 5;
+	vector<PPC> ppcs(camNum);
+	loadCamsFromTxt("camPaths.txt", ppcs, camNum);
+	for (int i = 0; i < camNum; ++i) {
+		PPC p0 = ppcs[i];
+		PPC p1 = (i + 1 == camNum) ? ppcs[0] : ppcs[i + 1];
+		float dist = (p0.C - p1.C).length();
+		for (float t = 0.0f; t < dist; t += dist / 100.f) {
+			ppc->interpCam(p0, p1, t / dist);
+			hwfb->redraw();
+			Fl::check();
+		}
+
+	}
+
+
+	/*
 	for (int i = 0; i < 6; i++) {
 		tms[i].scaleTex(2.0f);
-	}
+	}*/
 }
 void Scene::TileMirror() {
 	mirrorTiles = (mirrorTiles) ? 0 : 1;
 }
 
 void Scene::DBG() {
-
-	
 	renderMode = (renderMode > 1) ? 0 : renderMode + 1;
 	switch (texType) {
 	case 0:
@@ -341,6 +358,19 @@ void Scene::DBG() {
 		//tex->loadTiff("textures/light_gray_glazed_terracotta.tif");
 	}
 	
+}
+
+void Scene::loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum) {
+	ifstream ifs(fname);
+	if (!ifs.is_open()) {
+		cerr << "ERROR: Could not open file: " << fname << endl;
+		return;
+	}
+	for (int i = 0; i < camNum; i++) {
+		ifs >> ppcs[i];
+		cerr << ppcs[i].C << endl;
+	}
+	ifs.close();
 }
 
 /////////////////// funny stuff

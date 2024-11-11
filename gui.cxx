@@ -59,10 +59,10 @@ GUI::GUI() {
       o->callback((Fl_Callback*)cb_DBG);
     } // Fl_Button* o 
     { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, 2 * w, h, "Save Camera Pose");
-      o->callback((Fl_Callback*)cb_DBG);
+      o->callback((Fl_Callback*)cb_TilePlus);
     } // Fl_Button* o 
-    { Fl_Button* o = new Fl_Button(p, 2 * (p + h) + p, 2 * w, h, "Load Camera Path");
-  	  o->callback((Fl_Callback*)cb_DBG);
+    { Fl_Button* o = new Fl_Button(p, 3 * (p + h) + p, 2 * w, h, "Load Camera Path");
+  	  o->callback((Fl_Callback*)cb_TileMinus);
     } // Fl_Button* o 
 	/*
     	{ Fl_Button* o = new Fl_Button(p, (p + h) + p, w, h, "Revolve");

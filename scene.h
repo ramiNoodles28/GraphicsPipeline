@@ -46,6 +46,8 @@ public:
 	void TilePlus();
 	void TileMirror();
 
+	void loadCamsFromTxt(char* fname, vector<PPC>& ppcs, int camNum);
+
 	// old stuff
 
 
