@@ -18,8 +18,8 @@ using namespace std;
 Scene::Scene() {
 	int u0 = 20;
 	int v0 = 40;
-	int h = 400;
-	int w = 600;
+	int h = 720;
+	int w = 1280;
 	fb = new FrameBuffer(u0, v0, w, h);
 	//fb->position(u0, v0);
 	//fb->label("SW Framebuffer");
