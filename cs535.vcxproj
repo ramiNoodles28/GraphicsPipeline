@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CGInterface.h" />
     <ClInclude Include="easing.h" />
     <ClInclude Include="envmap.h" />
     <ClInclude Include="framebuffer.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="V3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CGInterface.cpp" />
     <ClCompile Include="easing.cpp" />
     <ClCompile Include="envmap.cpp" />
     <ClCompile Include="framebuffer.cpp" />

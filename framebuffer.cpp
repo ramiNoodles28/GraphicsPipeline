@@ -329,7 +329,6 @@ void FrameBuffer::rasterizeTriLines(V3 p0, V3 p1, V3 p2, unsigned int color, PPC
 	rasterize2DSegment(p2, p0, color, ppc);
 }
 
-
 void FrameBuffer::renderTris(TM tm, PPC* ppc) {
 	if (!tm.onFlag)
 		return;

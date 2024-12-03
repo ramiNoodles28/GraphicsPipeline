@@ -20,6 +20,7 @@ public:
 	TM(): onFlag(1), texFlag(0), verts(0), vertsN(0), tris(0), trisN(0),
 	colors(0), bakedColors(0), normals(0), texCoords(0), tex(0), rw(0), rh(0) {}; // default constructor
 	void setRectangle(float rw, float rh); // makes a basic rectangle mesh
+	void setCube(float s); // makes a cube mesh
 	void setGroundPlane(V3 center, V3 color, float s); // makes a ground plane
 	void allocateMemory(); // allocates memory for new meshes
 	void loadBin(char *fname); // loads mesh from binary file

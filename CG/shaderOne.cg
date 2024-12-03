@@ -1,0 +1,46 @@
+
+
+struct VertexDataInput {
+	float4 vertex: POSITION;
+	float3 normal: NORMAL;
+	float3 color: COLOR;
+};
+
+struct VertexDataOutput {
+	float4 projv  : POSITION;
+	float3 normal : TEXCOORD0;
+	float3 xyz : TEXCOORD1;
+	float3 color: COLOR;
+};
+
+struct PixelDataOutput {
+	float3 color: COLOR;
+};
+
+VertexDataOutput VertexMain(VertexDataInput vdi, 
+	uniform float4x4 modelViewProj,
+	uniform float3 objectCenter, uniform float morphAnimation) {
+
+  VertexDataOutput ret;
+  ret.projv = mul(modelViewProj, vdi.vertex);
+  ret.normal = vdi.normal;
+  ret.xyz = vdi.vertex.xyz;
+  ret.color = vdi.color;
+  return ret;
+
+}
+
+PixelDataOutput FragmentMain(VertexDataOutput pdi, uniform float3 eye) {
+
+  PixelDataOutput ret;
+
+  ret.color = pdi.color;
+
+  ret.color.r = pdi.xyz.x / 128.0f + 0.5f;
+  ret.color.g = pdi.xyz.y / 128.0f + 0.5f;
+  ret.color.b = (pdi.xyz.z+150.0f) / 128.0f + 0.5f;
+
+  return ret;
+
+}
+

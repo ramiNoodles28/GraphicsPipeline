@@ -1,0 +1,12 @@
+
+[*]
+
+# ReSharper properties
+resharper_allow_comment_after_lbrace = true
+resharper_anonymous_method_declaration_braces = end_of_line
+resharper_empty_block_style = together
+resharper_export_declaration_braces = end_of_line
+resharper_invocable_declaration_braces = end_of_line
+resharper_namespace_declaration_braces = end_of_line
+resharper_requires_expression_braces = end_of_line
+resharper_type_declaration_braces = end_of_line

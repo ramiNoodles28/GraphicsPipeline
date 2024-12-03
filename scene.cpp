@@ -33,7 +33,7 @@ Scene::Scene() {
 	hwfb->label("HW Framebuffer");
 	hwfb->show();
 	hwfb->redraw();
-	renderMode = 0;
+	renderMode = 1;
 
 	float hfov = 60.0f;
 	ppc = new PPC(hfov, fb->w, fb->h);
@@ -103,7 +103,7 @@ void Scene::RenderHW() {
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ppc->setViewHW();
 	for (int tmi = 0; tmi < tmsN; tmi++) {
@@ -112,7 +112,7 @@ void Scene::RenderHW() {
 		tms[tmi].renderHW(renderMode);
 	}
 
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
 	renderText(10.0f, hwfb->h - 20, ("FPS: " + std::to_string(fps)).c_str());
 	hwfb->redraw();
 }
@@ -160,70 +160,22 @@ void Scene::FreeCam() {
 	//fb->clear();
 	
 	V3 center(0, 0, -150.0f);
-	{
-		float rw = 50.0f;
-		float rh = 50.0f;
-		float rd = 50.0f;
-		tms[0].setRectangle(rw, rh); // front
-		tms[1].setRectangle(rw, rh);
-		tms[1].rotate(tms[1].centroid(), V3(0, 1, 0), 180.0f); // back
+	float s = 50.0f;
+	tms[0].setCube(s);
+	tms[1].setCube(s);
+	tms[2].setCube(s);
+	tms[0].translate(center);
+	tms[1].translate(center + V3(-100, 0, -200));
+	tms[2].translate(center + V3(+100, 0, -200));
+	tms[3].setGroundPlane(center - V3(0, 30, 100), V3(.5f, .5f, .5f), 500.f);
 
-		tms[2].setRectangle(rd, rh);
-		tms[2].rotate(tms[2].centroid(), V3(0, 1, 0), 90.0f); // left
-		tms[3].setRectangle(rd, rh);
-		tms[3].rotate(tms[3].centroid(), V3(0, -1, 0), 90.0f); // right
+	tileNum = 1.0f;
+	for (int i = 0; i < 6; i++) {
 
-		tms[4].setRectangle(rw, rh);
-		tms[4].rotate(tms[4].centroid(), V3(-1, 0, 0), 90.0f); // top
-		tms[5].setRectangle(rw, rh);
-		tms[5].rotate(tms[5].centroid(), V3(1, 0, 0), 90.0f); // bottom
-
-		tms[0].translate(center + V3(0, 0, rd / 2.0f));
-		tms[1].translate(center - V3(0, 0, rd / 2.0f));
-		tms[2].translate(center + V3(rw / 2.0f, 0, 0));
-		tms[3].translate(center - V3(rw / 2.0f, 0, 0));
-		tms[4].translate(center + V3(0, rh / 2.0f, 0));
-		tms[5].translate(center - V3(0, rh / 2.0f, 0));
-
-		tms[0].bakedColors[0] = V3(0, 1, 1);
-		tms[0].bakedColors[1] = V3(0, 0, 1);
-		tms[0].bakedColors[2] = V3(0, 0, 0);
-		tms[0].bakedColors[3] = V3(0, 1, 0);
-
-		tms[1].bakedColors[0] = V3(1, 1, 0);
-		tms[1].bakedColors[1] = V3(1, 0, 0);
-		tms[1].bakedColors[2] = V3(1, 0, 1);
-		tms[1].bakedColors[3] = V3(1, 1, 1);
-		
-		tms[2].bakedColors[0] = V3(0, 1, 0);
-		tms[2].bakedColors[1] = V3(0, 0, 0);
-		tms[2].bakedColors[2] = V3(1, 0, 0);
-		tms[2].bakedColors[3] = V3(1, 1, 0);
-
-		tms[3].bakedColors[0] = V3(1, 1, 1);
-		tms[3].bakedColors[1] = V3(1, 0, 1);
-		tms[3].bakedColors[2] = V3(0, 0, 1);
-		tms[3].bakedColors[3] = V3(0, 1, 1);
-
-		tms[4].bakedColors[0] = V3(1, 1, 1);
-		tms[4].bakedColors[1] = V3(0, 1, 1);
-		tms[4].bakedColors[2] = V3(0, 1, 0);
-		tms[4].bakedColors[3] = V3(1, 1, 0);
-
-		tms[5].bakedColors[0] = V3(0, 0, 1);
-		tms[5].bakedColors[1] = V3(1, 0, 1);
-		tms[5].bakedColors[2] = V3(1, 0, 0);
-		tms[5].bakedColors[3] = V3(0, 0, 0);
-
-
-		tileNum = 1.0f;
-		for (int i = 0; i < 6; i++) {
-			
-			tms[i].tex = tex;
-			tms[i].texFlag = 1;
-			tms[i].scaleTex(tileNum);
-			tms[i].loadTexture();
-		}
+		tms[i].tex = tex;
+		tms[i].texFlag = 1;
+		tms[i].scaleTex(tileNum);
+		tms[i].loadTexture();
 	}
 	hwfb->addCam(ppc);
 	hwfb->s = 2;
@@ -231,11 +183,12 @@ void Scene::FreeCam() {
 	//fb->s = 2;
 	
 	float t = 0.0f;
+	float r = 0.05f;
 	while (true) {
-		for (int i = 0; i < 6; i++) {
-			tms[i].rotate(center, V3(0.0f, 1.0f, 0.0f), 1);
-			tms[i].rotate(center, V3(1.0f, 0.0f, 0.0f), 1);
-			tms[i].rotate(center, V3(0.0f, 0.0f, 1.0f), sin(t));
+		for (int i = 0; i < 3; i++) {
+			tms[i].rotate(tms[i].centroid(), V3(0.0f, 1.0f, 0.0f), r);
+			tms[i].rotate(tms[i].centroid(), V3(1.0f, 0.0f, 0.0f), cos(t) / 8.0f);
+			tms[i].rotate(tms[i].centroid(), V3(0.0f, 0.0f, 1.0f), sin(t)/8.0f);
 		}
 
 		tex->mirrorTile = mirrorTiles;
@@ -243,7 +196,7 @@ void Scene::FreeCam() {
 		//fb->redraw();
 		hwfb->redraw();
 		Fl::check();
-		t += 0.01f;
+		t += (1.0f / 360.0f);
 	} 
 	
 	/*
@@ -335,7 +288,7 @@ void Scene::TileMirror() {
 }
 
 void Scene::DBG() {
-	renderMode = (renderMode > 1) ? 0 : renderMode + 1;
+	renderMode = (renderMode > 0) ? 0 : renderMode + 1;
 	switch (texType) {
 	case 0:
 		env = new EnvMap("environments/room.tiff");

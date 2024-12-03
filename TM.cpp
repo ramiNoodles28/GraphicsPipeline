@@ -37,9 +37,56 @@ void TM::setRectangle(float rw, float rh) {
 	normals[3] = V3(0.f, 0.f, 1.0f);
 	int tri = 0;
 	tris[tri * 3 + 0] = 1; tris[tri * 3 + 1] = 2; tris[tri * 3 + 2] = 0; tri++;
-	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0; tri++;
+	tris[tri * 3 + 0] = 2; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 0;
 	this->rw = rw;
 	this->rh = rh;
+}
+
+void TM::setCube(float s) {
+	vertsN = 8;
+	trisN = 12;
+	allocateMemory();
+	s /= 2.0f;
+	verts[0] = V3(s, s, s);
+	verts[1] = V3(s, s, -s);
+	verts[2] = V3(s, -s, s);
+	verts[3] = V3(-s, s, s);
+	verts[4] = V3(-s, -s, s);
+	verts[5] = V3(-s, s, -s);
+	verts[6] = V3(s, -s, -s);
+	verts[7] = V3(-s, -s, -s);
+
+	bakedColors[0] = V3(1, 1, 1);
+	bakedColors[1] = V3(1, 1, 0);
+	bakedColors[2] = V3(1, 0, 1);
+	bakedColors[3] = V3(0, 1, 1);
+	bakedColors[4] = V3(0, 0, 1);
+	bakedColors[5] = V3(0, 1, 0);
+	bakedColors[6] = V3(1, 0, 0);
+	bakedColors[7] = V3(0, 0, 0);
+
+
+
+	int tri = 0;
+	// top face
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 5; tris[tri * 3 + 2] = 3; tri++;
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 5; tri++;
+	// front face
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 1; tris[tri * 3 + 2] = 6; tri++;
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 5; tris[tri * 3 + 2] = 1; tri++;
+	// right face
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 6; tris[tri * 3 + 2] = 1; tri++;
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 2; tris[tri * 3 + 2] = 6; tri++;
+	// back face
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 4; tris[tri * 3 + 2] = 2; tri++;
+	tris[tri * 3] = 0; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 4; tri++;
+	// left face
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 3; tris[tri * 3 + 2] = 5; tri++;
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 4; tris[tri * 3 + 2] = 3; tri++;
+	// bottom face
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 2; tris[tri * 3 + 2] = 4; tri++;
+	tris[tri * 3] = 7; tris[tri * 3 + 1] = 6; tris[tri * 3 + 2] = 2;
+
 }
 
 void TM::setGroundPlane(V3 center, V3 color, float s) {
@@ -61,7 +108,6 @@ void TM::setGroundPlane(V3 center, V3 color, float s) {
 }
 
 TM TM::boundingbox() {
-	TM& t = *this;
 	V3 maxes = verts[0];
 	V3 mins = verts[0];
 	for (int i = 1; i < vertsN; i++) {
@@ -114,14 +160,12 @@ void TM::translate(V3 tv) {
 }
 
 V3 TM::centroid() {
-
 	V3 ret(0.0f, 0.0f, 0.0f);
 	for (int vi = 0; vi < vertsN; vi++) {
 		ret = ret + verts[vi];
 	}
 	ret = ret * (1.0f / (float)vertsN);
 	return ret;
-
 }
 
 void TM::loadBin(char *fname) {
@@ -289,12 +333,9 @@ void TM::renderHW(int renderMode) {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, texID);
 	}
-	
-	
+
 	glEnableClientState(GL_VERTEX_ARRAY); // vertices will be provided in an array
 	glVertexPointer(3, GL_FLOAT, 0, (float*)verts); // here are the vertices
-
-	
 
 	if (renderMode == 2) {
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY); // Enable texture coordinate array
